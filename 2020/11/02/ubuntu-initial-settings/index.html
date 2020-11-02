@@ -24,18 +24,22 @@
     var CONFIG = {"hostname":"lemonpy.net","root":"/","scheme":"Gemini","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="images">
-<meta property="og:url" content="http://lemonpy.net/images/index.html">
+  <meta name="description" content="UbuntuへのSSHアクセスの設定UbuntuにSSHで通信できなかったので設定しました。 openssh-serverのインストールまずはOpenSSH Serverをインストールします。 123$ sudo apt update$ sudo apt upgrade$ sudo apt install -y openssh-server  rootログインを禁止するのが一般的のようなので、特別">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntuインストール後の初期設定">
+<meta property="og:url" content="http://lemonpy.net/2020/11/02/ubuntu-initial-settings/index.html">
 <meta property="og:site_name" content="Lemonpy.net">
+<meta property="og:description" content="UbuntuへのSSHアクセスの設定UbuntuにSSHで通信できなかったので設定しました。 openssh-serverのインストールまずはOpenSSH Serverをインストールします。 123$ sudo apt update$ sudo apt upgrade$ sudo apt install -y openssh-server  rootログインを禁止するのが一般的のようなので、特別">
 <meta property="og:locale" content="ja_JP">
-<meta property="article:published_time" content="2020-11-02T09:01:06.000Z">
-<meta property="article:modified_time" content="2020-11-02T09:01:06.943Z">
+<meta property="article:published_time" content="2020-11-02T10:11:04.000Z">
+<meta property="article:modified_time" content="2020-11-02T10:45:13.523Z">
 <meta property="article:author" content="hiroaki-ma1203">
+<meta property="article:tag" content="Ubuntu">
+<meta property="article:tag" content="環境構築">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://lemonpy.net/images/">
+<link rel="canonical" href="http://lemonpy.net/2020/11/02/ubuntu-initial-settings/">
 
 
 <script class="page-configurations">
@@ -43,13 +47,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'ja'
   };
 </script>
 
-  <title>images | Lemonpy.net
-</title>
+  <title>Ubuntuインストール後の初期設定 | Lemonpy.net</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
     <script>
@@ -178,7 +181,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           見出し
@@ -191,6 +194,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ubuntu%E3%81%B8%E3%81%AESSH%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%AE%E8%A8%AD%E5%AE%9A"><span class="nav-number">1.</span> <span class="nav-text">UbuntuへのSSHアクセスの設定</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#openssh-server%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">1.1.</span> <span class="nav-text">openssh-serverのインストール</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E5%90%8D%E3%81%AE%E8%8B%B1%E8%AA%9E%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">フォルダ名の英語化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E8%A8%AD%E5%AE%9A-IP%E5%9B%BA%E5%AE%9A"><span class="nav-number">3.</span> <span class="nav-text">ネットワーク設定　IP固定</span></a></li></ol></div>
         </section>
         <!--/noindex-->
 
@@ -252,44 +256,109 @@
 </noscript>
 
 
-    <div class="main-inner page posts-expand">
+    <div class="main-inner post posts-expand">
       
-  
-  
 
       
 
-    
-    
-    
-    <div class="post-block" lang="ja">
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2020/11/02/ubuntu-initial-settings/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+    </span>
       <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ubuntuインストール後の初期設定
+        </h1>
 
-<h1 class="post-title" itemprop="name headline">images
-</h1>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+      
 
-<div class="post-meta-container">
+      <time title="作成日：2020-11-02 19:11:04 / 修正日：19:45:13" itemprop="dateCreated datePublished" datetime="2020-11-02T19:11:04+09:00">2020-11-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/" itemprop="url" rel="index"><span itemprop="name">Ubuntu</span></a>
+        </span>
+    </span>
+
   
-
 </div>
 
-</header>
+        </div>
+      </header>
 
-      
-      
-      
-      <div class="post-body">
-          
-      </div>
-      
-      
-      
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="UbuntuへのSSHアクセスの設定"><a href="#UbuntuへのSSHアクセスの設定" class="headerlink" title="UbuntuへのSSHアクセスの設定"></a>UbuntuへのSSHアクセスの設定</h1><p>UbuntuにSSHで通信できなかったので設定しました。</p>
+<h2 id="openssh-serverのインストール"><a href="#openssh-serverのインストール" class="headerlink" title="openssh-serverのインストール"></a>openssh-serverのインストール</h2><p>まずはOpenSSH Serverをインストールします。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt update</span><br><span class="line">$ sudo apt upgrade</span><br><span class="line">$ sudo apt install -y openssh-server</span><br></pre></td></tr></table></figure>
+
+<p>rootログインを禁止するのが一般的のようなので、特別な理由がなければ禁止しておきます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="フォルダ名の英語化"><a href="#フォルダ名の英語化" class="headerlink" title="フォルダ名の英語化"></a>フォルダ名の英語化</h1><h1 id="ネットワーク設定-IP固定"><a href="#ネットワーク設定-IP固定" class="headerlink" title="ネットワーク設定　IP固定"></a>ネットワーク設定　IP固定</h1>
     </div>
-    
 
     
     
     
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Ubuntu/" rel="tag"><i class="fa fa-tag"></i> Ubuntu</a>
+              <a href="/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/" rel="tag"><i class="fa fa-tag"></i> 環境構築</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/02/ubuntu-on-hyperv/" rel="prev" title="Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築">
+                  <i class="fa fa-chevron-left"></i> Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
 
 
       

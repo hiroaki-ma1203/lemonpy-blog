@@ -21,7 +21,7 @@
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"lemonpy.net","root":"/","scheme":"Gemini","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
+    var CONFIG = {"hostname":"lemonpy.net","root":"/","scheme":"Gemini","version":"8.0.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
 
   <meta name="description" content="このページの概略最近、いろいろな理由からLinuxの開発環境がほしくなり、Hyper-Vを使用してUbuntuの開発環境を構築したので、その時の手順などを備忘録としてメモを残します。 WSLとも迷ったのですが、スナップショット機能があったほうが安心できそうだったのと、複数の環境を作りたくなると思ったのでHyper-Vにしました。 Hyper-Vの有効化まずはWindowsのHyper-V機能を有効">
@@ -55,8 +55,8 @@
 <meta property="article:modified_time" content="2020-11-02T10:08:22.769Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="Ubuntu">
-<meta property="article:tag" content="Hyper-V">
 <meta property="article:tag" content="環境構築">
+<meta property="article:tag" content="Hyper-V">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/01-windows10-version.png">
 
@@ -173,17 +173,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>タグ<span class="badge">3</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>タグ</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>カテゴリ<span class="badge">3</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>カテゴリ</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>アーカイブ<span class="badge">2</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>アーカイブ</a>
 
   </li>
   </ul>
@@ -232,20 +232,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">ポスト</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">カテゴリ</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">タグ</span></a>
       </div>
   </nav>
@@ -328,11 +328,11 @@
         </span>
           、
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Hyper-V/" itemprop="url" rel="index"><span itemprop="name">Hyper-V</span></a>
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/" itemprop="url" rel="index"><span itemprop="name">Ubuntu</span></a>
         </span>
           、
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/" itemprop="url" rel="index"><span itemprop="name">Ubuntu</span></a>
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Hyper-V/" itemprop="url" rel="index"><span itemprop="name">Hyper-V</span></a>
         </span>
     </span>
 
@@ -435,8 +435,8 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/Ubuntu/" rel="tag"><i class="fa fa-tag"></i> Ubuntu</a>
-              <a href="/tags/Hyper-V/" rel="tag"><i class="fa fa-tag"></i> Hyper-V</a>
               <a href="/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/" rel="tag"><i class="fa fa-tag"></i> 環境構築</a>
+              <a href="/tags/Hyper-V/" rel="tag"><i class="fa fa-tag"></i> Hyper-V</a>
           </div>
 
         
@@ -448,6 +448,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2020/11/02/ubuntu-initial-settings/" rel="next" title="Ubuntuインストール後の初期設定">
+                  Ubuntuインストール後の初期設定 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -494,10 +497,10 @@
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  &copy; 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
-    <i class="fa fa-lemon"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">hiroaki-ma1203</span>
 </div>
