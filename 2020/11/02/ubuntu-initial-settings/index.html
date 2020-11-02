@@ -32,7 +32,7 @@
 <meta property="og:description" content="UbuntuへのSSHアクセスの設定UbuntuにSSHで通信できなかったので設定しました。 openssh-serverのインストールまずはOpenSSH Serverをインストールします。 123$ sudo apt update$ sudo apt upgrade$ sudo apt install -y openssh-server">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2020-11-02T10:11:04.000Z">
-<meta property="article:modified_time" content="2020-11-02T11:26:23.888Z">
+<meta property="article:modified_time" content="2020-11-02T13:01:02.889Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="Ubuntu">
 <meta property="article:tag" content="環境構築">
@@ -294,7 +294,7 @@
       <span class="post-meta-item-text">投稿日</span>
       
 
-      <time title="作成日：2020-11-02 19:11:04 / 修正日：20:26:23" itemprop="dateCreated datePublished" datetime="2020-11-02T19:11:04+09:00">2020-11-02</time>
+      <time title="作成日：2020-11-02 19:11:04 / 修正日：22:01:02" itemprop="dateCreated datePublished" datetime="2020-11-02T19:11:04+09:00">2020-11-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -344,7 +344,17 @@
 <h1 id="curlのインストール"><a href="#curlのインストール" class="headerlink" title="curlのインストール"></a>curlのインストール</h1><p>curlコマンドも入ってなかったので、インストールしました。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$  sudo apt install curl </span><br></pre></td></tr></table></figure>
 
-<h1 id="フォルダ名の英語化"><a href="#フォルダ名の英語化" class="headerlink" title="フォルダ名の英語化"></a>フォルダ名の英語化</h1><p>そのうち書きます</p>
+<h1 id="フォルダ名の英語化"><a href="#フォルダ名の英語化" class="headerlink" title="フォルダ名の英語化"></a>フォルダ名の英語化</h1><p>インストールした直後は、ホームディレクトリ内のディレクトリ名が日本語になっています。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls </span><br><span class="line">ダウンロード  テンプレート  デスクトップ  ドキュメント  ビデオ  ピクチャ  ミュージック  公開 </span><br></pre></td></tr></table></figure>
+<p>SSHで利用するときに入力が面倒なので、英語に変更しました。</p>
+<p>GUIを開いて、ターミナルで下記コマンド実行します。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ LANG&#x3D;C xdg-user-dirs-gtk-update </span><br></pre></td></tr></table></figure>
+
+<p>確認画面が出るので「Update Names」をクリックすると、下記のように英語の名前に切り替わります。 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls </span><br><span class="line">Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos </span><br></pre></td></tr></table></figure>
+
+<p>GUIで操作するのが面倒な場合は下記でもできるようですが、日本語のフォルダが残ってしまいました。<br>何かやり方が悪い？のか不明です。</p>
+<p>$ LANG=C xdg-user-dirs-update –force </p>
 <h1 id="ネットワーク設定-IP固定"><a href="#ネットワーク設定-IP固定" class="headerlink" title="ネットワーク設定　IP固定"></a>ネットワーク設定　IP固定</h1><p>そのうち書きます</p>
 
     </div>
