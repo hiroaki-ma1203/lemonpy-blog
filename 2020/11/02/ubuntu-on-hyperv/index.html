@@ -42,8 +42,17 @@
 <meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/24-hyper-v-inst_opt.png">
 <meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/31-hyper-v-connect.png">
 <meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/32-hyper-v-start.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/41-ubuntu-install.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/42-ubuntu-key.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/43-ubuntu-minimum.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/44-ubuntu-clean_install.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/45-ubuntu-clean_install2.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/46-ubuntu-timezone.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/47-ubuntu-username.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/48-ubuntu-progress.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/49-ubuntu-start.png">
 <meta property="article:published_time" content="2020-11-02T03:10:13.000Z">
-<meta property="article:modified_time" content="2020-11-02T09:23:33.770Z">
+<meta property="article:modified_time" content="2020-11-02T10:08:22.769Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="Ubuntu">
 <meta property="article:tag" content="Hyper-V">
@@ -207,7 +216,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%81%93%E3%81%AE%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E6%A6%82%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">このページの概略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hyper-V%E3%81%AE%E6%9C%89%E5%8A%B9%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">Hyper-Vの有効化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows%E3%81%AE%E3%82%A8%E3%83%87%E3%82%A3%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E7%A2%BA%E8%AA%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Windowsのエディションの確認方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hyper-V%E3%81%AE%E6%9C%89%E5%8A%B9%E5%8C%96-1"><span class="nav-number">2.2.</span> <span class="nav-text">Hyper-Vの有効化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%AE%E6%96%B0%E8%A6%8F%E4%BD%9C%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">仮想マシンの新規作成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8D%E5%89%8D%E3%81%A8%E5%A0%B4%E6%89%80%E3%81%AE%E6%8C%87%E5%AE%9A"><span class="nav-number">3.1.</span> <span class="nav-text">名前と場所の指定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%96%E4%BB%A3%E3%81%AE%E6%8C%87%E5%AE%9A"><span class="nav-number">3.2.</span> <span class="nav-text">世代の指定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3"><span class="nav-number">3.3.</span> <span class="nav-text">インストールオプション</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%AE%E6%96%B0%E8%A6%8F%E4%BD%9C%E6%88%90%E3%82%A6%E3%82%A3%E3%82%B6%E3%83%BC%E3%83%89%E3%81%AE%E5%AE%8C%E4%BA%86"><span class="nav-number">3.4.</span> <span class="nav-text">仮想マシンの新規作成ウィザードの完了</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%B8Ubuntu%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.</span> <span class="nav-text">仮想マシンへUbuntuをインストール</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hyper-V%E3%81%B8%E3%81%AE%E6%8E%A5%E7%B6%9A%E3%81%A8%E8%B5%B7%E5%8B%95"><span class="nav-number">4.1.</span> <span class="nav-text">Hyper-Vへの接続と起動</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ubuntu%E3%81%AEiso%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%85%A5%E6%89%8B"><span class="nav-number">5.</span> <span class="nav-text">Ubuntuのisoファイルの入手</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%81%93%E3%81%AE%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E6%A6%82%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">このページの概略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hyper-V%E3%81%AE%E6%9C%89%E5%8A%B9%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">Hyper-Vの有効化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows%E3%81%AE%E3%82%A8%E3%83%87%E3%82%A3%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E7%A2%BA%E8%AA%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Windowsのエディションの確認方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hyper-V%E3%81%AE%E6%9C%89%E5%8A%B9%E5%8C%96-1"><span class="nav-number">2.2.</span> <span class="nav-text">Hyper-Vの有効化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%AE%E6%96%B0%E8%A6%8F%E4%BD%9C%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">仮想マシンの新規作成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8D%E5%89%8D%E3%81%A8%E5%A0%B4%E6%89%80%E3%81%AE%E6%8C%87%E5%AE%9A"><span class="nav-number">3.1.</span> <span class="nav-text">名前と場所の指定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%96%E4%BB%A3%E3%81%AE%E6%8C%87%E5%AE%9A"><span class="nav-number">3.2.</span> <span class="nav-text">世代の指定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3"><span class="nav-number">3.3.</span> <span class="nav-text">インストールオプション</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%AE%E6%96%B0%E8%A6%8F%E4%BD%9C%E6%88%90%E3%82%A6%E3%82%A3%E3%82%B6%E3%83%BC%E3%83%89%E3%81%AE%E5%AE%8C%E4%BA%86"><span class="nav-number">3.4.</span> <span class="nav-text">仮想マシンの新規作成ウィザードの完了</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%B8Ubuntu%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.</span> <span class="nav-text">仮想マシンへUbuntuをインストール</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hyper-V%E3%81%B8%E3%81%AE%E6%8E%A5%E7%B6%9A%E3%81%A8%E8%B5%B7%E5%8B%95"><span class="nav-number">4.1.</span> <span class="nav-text">Hyper-Vへの接続と起動</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.2.</span> <span class="nav-text">Ubuntuのインストール</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ubuntu%E3%81%AEiso%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%85%A5%E6%89%8B"><span class="nav-number">5.</span> <span class="nav-text">Ubuntuのisoファイルの入手</span></a></li></ol></div>
         </section>
         <!--/noindex-->
 
@@ -307,7 +316,7 @@
       <span class="post-meta-item-text">投稿日</span>
       
 
-      <time title="作成日：2020-11-02 12:10:13 / 修正日：18:23:33" itemprop="dateCreated datePublished" datetime="2020-11-02T12:10:13+09:00">2020-11-02</time>
+      <time title="作成日：2020-11-02 12:10:13 / 修正日：19:08:22" itemprop="dateCreated datePublished" datetime="2020-11-02T12:10:13+09:00">2020-11-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -373,19 +382,49 @@
 <img src="/2020/11/02/ubuntu-on-hyperv/23-hyper-v-gene.png" class="" title="Hyper-Vの世代">
 
 <h2 id="インストールオプション"><a href="#インストールオプション" class="headerlink" title="インストールオプション"></a>インストールオプション</h2><p>ブートイメージファイルを指定するか、後で設定するか選択できます。<br>Ubuntuのサイトからisoファイルをダウンロードしていたので、そのファイルパスを指定します。</p>
+<p><a href="#Ubuntu%E3%81%AEiso%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%85%A5%E6%89%8B">（参考）Ubuntuのisoファイルの入手</a></p>
 <img src="/2020/11/02/ubuntu-on-hyperv/24-hyper-v-inst_opt.png" class="" title="Hyper-Vのインストールオプション">
 
 <h2 id="仮想マシンの新規作成ウィザードの完了"><a href="#仮想マシンの新規作成ウィザードの完了" class="headerlink" title="仮想マシンの新規作成ウィザードの完了"></a>仮想マシンの新規作成ウィザードの完了</h2><p>最後に設定した内容を確認し、完了をクリックします。</p>
 <h1 id="仮想マシンへUbuntuをインストール"><a href="#仮想マシンへUbuntuをインストール" class="headerlink" title="仮想マシンへUbuntuをインストール"></a>仮想マシンへUbuntuをインストール</h1><h2 id="Hyper-Vへの接続と起動"><a href="#Hyper-Vへの接続と起動" class="headerlink" title="Hyper-Vへの接続と起動"></a>Hyper-Vへの接続と起動</h2><p>元の画面に戻ると、仮想マシンが作られていると思いますので、名前をダブルクリックして接続します。</p>
-<img src="/2020/11/02/ubuntu-on-hyperv/31-hyper-v-connect.png" class="" title="Hyper-Vの接続">
+<img src="/2020/11/02/ubuntu-on-hyperv/31-hyper-v-connect.png" class="" title="Hyper-Vへの接続">
 
 <p>この時点ではまだ仮想マシンは起動していませんので、画面上の起動ボタンをクリックし、起動します。</p>
 <img src="/2020/11/02/ubuntu-on-hyperv/32-hyper-v-start.png" class="" title="Hyper-Vの起動">
 
 
-<p>Ubuntuのインストーラが自動で起動しますので、画面指示に従ってインストールします。</p>
+<h2 id="Ubuntuのインストール"><a href="#Ubuntuのインストール" class="headerlink" title="Ubuntuのインストール"></a>Ubuntuのインストール</h2><p>Ubuntuのインストーラが自動で起動しますので、画面指示に従ってインストールします。</p>
+<p>言語を選択し、右側の「Ubuntuをインストール」を選択します</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/41-ubuntu-install.png" class="" title="インストーラーの開始">
+
+<p>キーボードレイアウトは日本語を選択</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/42-ubuntu-key.png" class="" title="キーボードレイアウト選択">
+
+<p>今回はオフィスなどは不要なので最小インストールを選択</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/43-ubuntu-minimum.png" class="" title="最小インストール">
+
+<p>作ったばかりのクリーンな環境なので、削除してインストールします</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/44-ubuntu-clean_install.png" class="" title="クリーンインストール">
+
+<p>とりあえず「続ける」を選択</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/45-ubuntu-clean_install2.png" class="" title="パーディションの確認">
+
+<p>地域を選択</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/46-ubuntu-timezone.png" class="" title="タイムゾーン選択">
+
+<p>ユーザーを作成します</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/47-ubuntu-username.png" class="" title="ユーザー作成">
+
+<p>インストールが完了するのを待ちます</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/48-ubuntu-progress.png" class="" title="インストール中">
+
+<p>インストールが完了すると再起動するよう表示されますので、そのまま再起動します。<br>しばらくするとUbuntuが起動しますので、必要に応じて各種設定をしてください。 </p>
+<img src="/2020/11/02/ubuntu-on-hyperv/49-ubuntu-start.png" class="" title="インストールが完了">
+
+<p>これでUbuntuのインストールは完了です。<br>ソフトウェアの更新などが表示された場合は適宜実施してください。 </p>
+<p>初期設定は別記事で書く予定です。</p>
 <h1 id="Ubuntuのisoファイルの入手"><a href="#Ubuntuのisoファイルの入手" class="headerlink" title="Ubuntuのisoファイルの入手"></a>Ubuntuのisoファイルの入手</h1><p>下記のページからUbuntuのisoイメージをダウンロードします。</p>
-<p><a target="_blank" rel="noopener" href="https://www.ubuntulinux.jp/download">Ubuntuの入手</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.ubuntulinux.jp/download">Ubuntuの入手 (https://www.ubuntulinux.jp/download)</a></p>
 
     </div>
 
