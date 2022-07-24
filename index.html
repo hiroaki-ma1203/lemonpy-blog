@@ -212,7 +212,7 @@
       <span class="post-meta-item-text">投稿日</span>
       
 
-      <time title="作成日：2022-07-24 10:49:34 / 修正日：10:56:45" itemprop="dateCreated datePublished" datetime="2022-07-24T10:49:34+00:00">2022-07-24</time>
+      <time title="作成日：2022-07-24 10:49:34 / 修正日：10:59:15" itemprop="dateCreated datePublished" datetime="2022-07-24T10:49:34+00:00">2022-07-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -239,10 +239,14 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="Dockerfileの記述"><a href="#Dockerfileの記述" class="headerlink" title="Dockerfileの記述"></a>Dockerfileの記述</h1><h2 id="基本的な記述"><a href="#基本的な記述" class="headerlink" title="基本的な記述"></a>基本的な記述</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FROM &lt;Image&gt;:&lt;tag&gt;</span><br><span class="line"></span><br><span class="line">COPU &lt;コピー元ファイルパス&gt; &lt;コピー先フォルダパス&gt;</span><br><span class="line"></span><br><span class="line">RUN &lt;実行するコマンド　pip installなど&gt;</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [ &lt;実行コマンド&gt; ]</span><br><span class="line"></span><br><span class="line">CMD [ &lt;実行コマンド&gt; ]</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="サンプル"><a href="#サンプル" class="headerlink" title="サンプル"></a>サンプル</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:22.04</span><br><span class="line"></span><br><span class="line">RUN apt-get update \</span><br><span class="line">    &amp;&amp; apt upgrade -y \</span><br><span class="line">    &amp;&amp; apt install -y \</span><br><span class="line">    tesseract-ocr \</span><br><span class="line">    tesseract-ocr-jpn \</span><br><span class="line">    libtesseract-dev \</span><br><span class="line">    python3 \</span><br><span class="line">    python3-pip\</span><br><span class="line">    &amp;&amp; apt clean \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/*</span><br><span class="line"></span><br><span class="line">RUN pip3 install awslambdaric</span><br><span class="line"></span><br><span class="line">ARG APP_DIR=&quot;/home/app/&quot;</span><br><span class="line">RUN mkdir -p $&#123;APP_DIR&#125;</span><br><span class="line">WORKDIR $&#123;APP_DIR&#125;</span><br><span class="line">COPY app.py ocr.py requirements.txt $&#123;APP_DIR&#125;</span><br><span class="line"></span><br><span class="line">ARG TESSDATA_DIR=&quot;/home/app/tessdata/&quot;</span><br><span class="line">RUN mkdir -p $&#123;TESSDATA_DIR&#125;</span><br><span class="line">COPY tessdata/ $&#123;TESSDATA_DIR&#125;</span><br><span class="line"></span><br><span class="line">RUN python3 -m pip install -r requirements.txt -t $&#123;APP_DIR&#125;</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [ &quot;/usr/bin/python3&quot;, &quot;-m&quot;, &quot;awslambdaric&quot; ]</span><br><span class="line">CMD [&quot;app.lambda_handler&quot;]</span><br></pre></td></tr></table></figure>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/24/dockerfile-memo/#more" rel="contents">
+                続きを読む &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
