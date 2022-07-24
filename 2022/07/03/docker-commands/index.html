@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="イメージの操作イメージの取得1$ docker pull  1$ docker pull &lt;Name&gt;:Tag  イメージの表示1$ docker images  イメージの削除1$ docker rmi &lt;イメージID&gt;  1$ docker rmi $(docker images -q)  1$ docker image prune  コンテナ操作コンテナの表示コンテナ">
+    <meta name="description" content="イメージの操作イメージの取得1$ docker pull  1$ docker pull &lt;Name&gt;:Tag  イメージの表示1$ docker images  イメージの削除1$ docker rmi &lt;イメージID&gt;  まとめて削除したい場合 1$ docker rmi $(docker images -q)  まとめて削除したい場合その2 1$ docker ima">
 <meta property="og:type" content="article">
 <meta property="og:title" content="よく使うDockerコマンドの備忘録">
 <meta property="og:url" content="http://lemonpy.net/2022/07/03/docker-commands/index.html">
 <meta property="og:site_name" content="Lemonpy.net">
-<meta property="og:description" content="イメージの操作イメージの取得1$ docker pull  1$ docker pull &lt;Name&gt;:Tag  イメージの表示1$ docker images  イメージの削除1$ docker rmi &lt;イメージID&gt;  1$ docker rmi $(docker images -q)  1$ docker image prune  コンテナ操作コンテナの表示コンテナ">
+<meta property="og:description" content="イメージの操作イメージの取得1$ docker pull  1$ docker pull &lt;Name&gt;:Tag  イメージの表示1$ docker images  イメージの削除1$ docker rmi &lt;イメージID&gt;  まとめて削除したい場合 1$ docker rmi $(docker images -q)  まとめて削除したい場合その2 1$ docker ima">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2022-07-03T07:38:42.000Z">
-<meta property="article:modified_time" content="2022-07-24T10:34:59.155Z">
+<meta property="article:modified_time" content="2022-07-24T10:42:37.253Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="環境構築">
 <meta property="article:tag" content="Docker">
@@ -226,7 +226,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">編集日</span>
-      <time title="修正日：2022-07-24 10:34:59" itemprop="dateModified" datetime="2022-07-24T10:34:59+00:00">2022-07-24</time>
+      <time title="修正日：2022-07-24 10:42:37" itemprop="dateModified" datetime="2022-07-24T10:42:37+00:00">2022-07-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -260,8 +260,10 @@
 
 <h2 id="イメージの削除"><a href="#イメージの削除" class="headerlink" title="イメージの削除"></a>イメージの削除</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker rmi &lt;イメージID&gt;</span><br></pre></td></tr></table></figure>
 
+<p>まとめて削除したい場合</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker rmi $(docker images -q)</span><br></pre></td></tr></table></figure>
 
+<p>まとめて削除したい場合その2</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker image prune</span><br></pre></td></tr></table></figure>
 
 <h1 id="コンテナ操作"><a href="#コンテナ操作" class="headerlink" title="コンテナ操作"></a>コンテナ操作</h1><h2 id="コンテナの表示"><a href="#コンテナの表示" class="headerlink" title="コンテナの表示"></a>コンテナの表示</h2><p>コンテナ一覧</p>
@@ -284,9 +286,20 @@
 <h2 id="その他のコンテナの操作"><a href="#その他のコンテナの操作" class="headerlink" title="その他のコンテナの操作"></a>その他のコンテナの操作</h2><p>コンテナにインタラプト(-it)</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it &lt;イメージ名&gt;</span><br></pre></td></tr></table></figure>
 
+<p>コンテナをバックグラウンド実行(-d)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d &lt;イメージ名&gt;</span><br></pre></td></tr></table></figure>
+
+<p>コンテナに環境変数を与える(-e)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -e &lt;Key&gt;=&lt;Value&gt;</span><br></pre></td></tr></table></figure>
+
+<p>コンテナ名を指定する(–name)　※指定しない場合は自動で名前が生成される</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name &lt;Name&gt;</span><br></pre></td></tr></table></figure>
+
+<p>コンテナにポートマッピング(-p)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -p &lt;コンテナ側ポート&gt;:&lt;ホスト側ポート&gt;</span><br><span class="line">docker run -p 80:8080</span><br></pre></td></tr></table></figure>
+
 <p>コンテナのIPアドレス確認</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Docker inspect &lt;コンテナID&gt; | grep IPAddress</span><br></pre></td></tr></table></figure>
-
 
 <p>コンテナで変更された内容確認</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker diff &lt;コンテナID&gt;</span><br></pre></td></tr></table></figure>
