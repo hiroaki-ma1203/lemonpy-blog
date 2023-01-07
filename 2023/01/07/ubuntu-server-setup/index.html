@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="概要Ubuntu ServerをHyper-Vに構築し、VSCodeからリモートSSHリモート接続できるようにします。">
+    <meta name="description" content="概要Ubuntu ServerをHyper-Vに構築し、VSCodeからRemote-SSHでリモート接続できるようにします。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Ubuntu Serverで開発環境を立てた時のメモ">
 <meta property="og:url" content="http://lemonpy.net/2023/01/07/ubuntu-server-setup/index.html">
 <meta property="og:site_name" content="Lemonpy.net">
-<meta property="og:description" content="概要Ubuntu ServerをHyper-Vに構築し、VSCodeからリモートSSHリモート接続できるようにします。">
+<meta property="og:description" content="概要Ubuntu ServerをHyper-Vに構築し、VSCodeからRemote-SSHでリモート接続できるようにします。">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2023-01-07T07:47:36.000Z">
-<meta property="article:modified_time" content="2023-01-07T07:47:36.074Z">
+<meta property="article:modified_time" content="2023-01-07T07:52:19.778Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="Hyper-V">
 <meta property="article:tag" content="環境構築">
@@ -220,8 +220,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">投稿日</span>
+      
 
-      <time title="作成日：2023-01-07 07:47:36" itemprop="dateCreated datePublished" datetime="2023-01-07T07:47:36+00:00">2023-01-07</time>
+      <time title="作成日：2023-01-07 07:47:36 / 修正日：07:52:19" itemprop="dateCreated datePublished" datetime="2023-01-07T07:47:36+00:00">2023-01-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -251,7 +252,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>Ubuntu ServerをHyper-Vに構築し、VSCodeからリモートSSHリモート接続できるようにします。</p>
+        <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>Ubuntu ServerをHyper-Vに構築し、VSCodeからRemote-SSHでリモート接続できるようにします。</p>
 <span id="more"></span>
 
 <h1 id="UbuntuのHyper-Vへのインストール"><a href="#UbuntuのHyper-Vへのインストール" class="headerlink" title="UbuntuのHyper-Vへのインストール"></a>UbuntuのHyper-Vへのインストール</h1><h2 id="OSイメージの入手"><a href="#OSイメージの入手" class="headerlink" title="OSイメージの入手"></a>OSイメージの入手</h2><p>以下のサイトからisoをダウンロードします。</p>
