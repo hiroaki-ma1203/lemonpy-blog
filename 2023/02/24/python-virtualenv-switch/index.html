@@ -20,29 +20,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="UbuntuへのSSHアクセスの設定UbuntuにSSHで通信できなかったので設定しました。 openssh-serverのインストールまずはOpenSSH Serverをインストールします。 123$ sudo apt update$ sudo apt upgrade$ sudo apt install -y openssh-server">
+    <meta name="description" content="UbuntuへのVirtualenvのインストールpythonでいろいろなライブラリを入れていくと管理が大変そうなので、開発環境を分けられるようにvirtualenvも入れておきます。 (Github) pyenv&#x2F;pyenv-virtualenvインストール方法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Ubuntuインストール後の初期設定">
-<meta property="og:url" content="http://lemonpy.net/2020/11/02/ubuntu-initial-settings/index.html">
+<meta property="og:title" content="virtualenv使用して複数の開発環境を切り替えて使えるようにした時のメモ">
+<meta property="og:url" content="http://lemonpy.net/2023/02/24/python-virtualenv-switch/index.html">
 <meta property="og:site_name" content="Lemonpy.net">
-<meta property="og:description" content="UbuntuへのSSHアクセスの設定UbuntuにSSHで通信できなかったので設定しました。 openssh-serverのインストールまずはOpenSSH Serverをインストールします。 123$ sudo apt update$ sudo apt upgrade$ sudo apt install -y openssh-server">
+<meta property="og:description" content="UbuntuへのVirtualenvのインストールpythonでいろいろなライブラリを入れていくと管理が大変そうなので、開発環境を分けられるようにvirtualenvも入れておきます。 (Github) pyenv&#x2F;pyenv-virtualenvインストール方法">
 <meta property="og:locale" content="ja_JP">
-<meta property="article:published_time" content="2020-11-02T19:11:04.000Z">
-<meta property="article:modified_time" content="2021-09-26T09:11:22.348Z">
+<meta property="article:published_time" content="2023-02-24T14:46:24.000Z">
+<meta property="article:modified_time" content="2023-02-24T14:46:24.934Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="環境構築">
 <meta property="article:tag" content="Ubuntu">
+<meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://lemonpy.net/2020/11/02/ubuntu-initial-settings/">
+<link rel="canonical" href="http://lemonpy.net/2023/02/24/python-virtualenv-switch/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2020/11/02/ubuntu-initial-settings/","path":"2020/11/02/ubuntu-initial-settings/","title":"Ubuntuインストール後の初期設定"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2023/02/24/python-virtualenv-switch/","path":"2023/02/24/python-virtualenv-switch/","title":"virtualenv使用して複数の開発環境を切り替えて使えるようにした時のメモ"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Ubuntuインストール後の初期設定 | Lemonpy.net</title>
+<title>virtualenv使用して複数の開発環境を切り替えて使えるようにした時のメモ | Lemonpy.net</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9164967087700307"crossorigin="anonymous"></script>
@@ -121,7 +122,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ubuntu%E3%81%B8%E3%81%AESSH%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%AE%E8%A8%AD%E5%AE%9A"><span class="nav-number">1.</span> <span class="nav-text">UbuntuへのSSHアクセスの設定</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#openssh-server%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">1.1.</span> <span class="nav-text">openssh-serverのインストール</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#root%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E7%A6%81%E6%AD%A2"><span class="nav-number">1.2.</span> <span class="nav-text">rootログインの禁止</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#openssh-server%E3%81%8C%E8%87%AA%E5%8B%95%E8%B5%B7%E5%8B%95%E3%81%99%E3%82%8B%E8%A8%AD%E5%AE%9A%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%A6%E3%81%84%E3%82%8B%E3%81%8B%E7%A2%BA%E8%AA%8D"><span class="nav-number">1.3.</span> <span class="nav-text">openssh-serverが自動起動する設定になっているか確認</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#curl%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">2.</span> <span class="nav-text">curlのインストール</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E5%90%8D%E3%81%AE%E8%8B%B1%E8%AA%9E%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">フォルダ名の英語化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E8%A8%AD%E5%AE%9A-IP%E5%9B%BA%E5%AE%9A"><span class="nav-number">4.</span> <span class="nav-text">ネットワーク設定　IP固定</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ubuntu%E3%81%B8%E3%81%AEVirtualenv%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">1.</span> <span class="nav-text">UbuntuへのVirtualenvのインストール</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#virtualenv%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">1.1.</span> <span class="nav-text">virtualenvのインストール</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pyenv%E3%81%A8virtualenv%E3%81%AE%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">pyenvとvirtualenvの使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#virtualenv%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%A6%E9%96%8B%E7%99%BA%E5%B0%82%E7%94%A8%E3%81%AE%E7%92%B0%E5%A2%83%E3%82%92%E4%BD%9C%E3%82%8B"><span class="nav-number">2.1.</span> <span class="nav-text">virtualenvを使用して開発専用の環境を作る</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#virtualenv%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%A6%E9%96%8B%E7%99%BA%E5%B0%82%E7%94%A8%E3%81%AE%E7%92%B0%E5%A2%83%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B"><span class="nav-number">2.2.</span> <span class="nav-text">virtualenvを使用して開発専用の環境を使用する</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -191,7 +192,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
-    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2020/11/02/ubuntu-initial-settings/">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2023/02/24/python-virtualenv-switch/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -204,12 +205,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Ubuntuインストール後の初期設定 | Lemonpy.net">
+      <meta itemprop="name" content="virtualenv使用して複数の開発環境を切り替えて使えるようにした時のメモ | Lemonpy.net">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Ubuntuインストール後の初期設定
+          virtualenv使用して複数の開発環境を切り替えて使えるようにした時のメモ
         </h1>
 
         <div class="post-meta-container">
@@ -220,14 +221,7 @@
       </span>
       <span class="post-meta-item-text">投稿日</span>
 
-      <time title="作成日：2020-11-02 19:11:04" itemprop="dateCreated datePublished" datetime="2020-11-02T19:11:04+00:00">2020-11-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">編集日</span>
-      <time title="修正日：2021-09-26 09:11:22" itemprop="dateModified" datetime="2021-09-26T09:11:22+00:00">2021-09-26</time>
+      <time title="作成日：2023-02-24 14:46:24" itemprop="dateCreated datePublished" datetime="2023-02-24T14:46:24+00:00">2023-02-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -236,6 +230,10 @@
       <span class="post-meta-item-text">カテゴリ</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
           <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
         </span>
           、
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
@@ -253,41 +251,44 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="UbuntuへのSSHアクセスの設定"><a href="#UbuntuへのSSHアクセスの設定" class="headerlink" title="UbuntuへのSSHアクセスの設定"></a>UbuntuへのSSHアクセスの設定</h1><p>UbuntuにSSHで通信できなかったので設定しました。</p>
-<h2 id="openssh-serverのインストール"><a href="#openssh-serverのインストール" class="headerlink" title="openssh-serverのインストール"></a>openssh-serverのインストール</h2><p>まずはOpenSSH Serverをインストールします。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt update</span><br><span class="line">$ sudo apt upgrade</span><br><span class="line">$ sudo apt install -y openssh-server</span><br></pre></td></tr></table></figure>
+        <h1 id="UbuntuへのVirtualenvのインストール"><a href="#UbuntuへのVirtualenvのインストール" class="headerlink" title="UbuntuへのVirtualenvのインストール"></a>UbuntuへのVirtualenvのインストール</h1><p>pythonでいろいろなライブラリを入れていくと管理が大変そうなので、開発環境を分けられるようにvirtualenvも入れておきます。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/pyenv/pyenv-virtualenv#installation">(Github) pyenv&#x2F;pyenv-virtualenvインストール方法</a></p>
 <span id="more"></span>
 
-<h2 id="rootログインの禁止"><a href="#rootログインの禁止" class="headerlink" title="rootログインの禁止"></a>rootログインの禁止</h2><p>rootログインを禁止するのが一般的のようなので、特別な理由がなければ禁止しておきます。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vi /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+<h2 id="virtualenvのインストール"><a href="#virtualenvのインストール" class="headerlink" title="virtualenvのインストール"></a>virtualenvのインストール</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv</span><br></pre></td></tr></table></figure>
 
-<p>下記のように一行追記</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#PermitRootLogin prohibit-password </span><br><span class="line">PermitRootLogin no  &lt;- 追記</span><br></pre></td></tr></table></figure>
+<p>2023&#x2F;2&#x2F;20 の時点では、pyenvをインストールしたら同時にインストールされていました。<br>自動で有効化するよう以下のようにコマンドを実行します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">&#x27;eval &quot;$(pyenv virtualenv-init -)&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
 
-<p>SSHサービスを再起動します。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo systemctl restart ssh </span><br></pre></td></tr></table></figure>
+<p>そしてシェルを再起動します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">exec</span> <span class="string">&quot;<span class="variable">$SHELL</span>&quot;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="openssh-serverが自動起動する設定になっているか確認"><a href="#openssh-serverが自動起動する設定になっているか確認" class="headerlink" title="openssh-serverが自動起動する設定になっているか確認"></a>openssh-serverが自動起動する設定になっているか確認</h2><p>OS起動時に自動でSSH Serverが立ち上がるか確認します。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl is-enabled ssh </span><br><span class="line">enabled </span><br></pre></td></tr></table></figure>
 
-<p>enabledになっていればUbuntu起動時にSSHサーバーも自動で起動します。<br>disableになっている場合は下記のコマンドで自動起動するように設定しておきます。 </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo systemctl <span class="built_in">enable</span> ssh </span><br></pre></td></tr></table></figure>
+<h1 id="pyenvとvirtualenvの使用"><a href="#pyenvとvirtualenvの使用" class="headerlink" title="pyenvとvirtualenvの使用"></a>pyenvとvirtualenvの使用</h1><p>pythonの特定バージョンをインストールし、virtualenvで開発用の環境を複数作ってみます。</p>
+<h2 id="virtualenvを使用して開発専用の環境を作る"><a href="#virtualenvを使用して開発専用の環境を作る" class="headerlink" title="virtualenvを使用して開発専用の環境を作る"></a>virtualenvを使用して開発専用の環境を作る</h2><p>次にvirtualenvを使用していくつか環境を作ってみます。<br>今回作るのは、develop-3.10.4と、develop-3.11.2という2個の環境です</p>
+<p>以下のコマンドを実行して環境を作ります</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv virtualenv 3.10.4 develop-3.10.4</span><br><span class="line">$ pyenv virtualenv 3.11.2 develop-3.11.2</span><br></pre></td></tr></table></figure>
 
-<p>ターミナルアプリでUbuntuにログインできれば完了。</p>
-<h1 id="curlのインストール"><a href="#curlのインストール" class="headerlink" title="curlのインストール"></a>curlのインストール</h1><p>curlコマンドも入ってなかったので、インストールしました。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$  sudo apt install curl </span><br></pre></td></tr></table></figure>
+<h2 id="virtualenvを使用して開発専用の環境を使用する"><a href="#virtualenvを使用して開発専用の環境を使用する" class="headerlink" title="virtualenvを使用して開発専用の環境を使用する"></a>virtualenvを使用して開発専用の環境を使用する</h2><p>以下のコマンドを実行して環境を適用します。<br>適用されるとコンソールのユーザー名の前に環境名が表示されるようになります。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv <span class="built_in">local</span> develop-3.10.4</span><br></pre></td></tr></table></figure>
 
-<h1 id="フォルダ名の英語化"><a href="#フォルダ名の英語化" class="headerlink" title="フォルダ名の英語化"></a>フォルダ名の英語化</h1><p>インストールした直後は、ホームディレクトリ内のディレクトリ名が日本語になっています。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls </span><br><span class="line">ダウンロード  テンプレート  デスクトップ  ドキュメント  ビデオ  ピクチャ  ミュージック  公開 </span><br></pre></td></tr></table></figure>
-<p>SSHで利用するときに入力が面倒なので、英語に変更しました。</p>
-<p>GUIを開いて、ターミナルで下記コマンド実行します。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ LANG=C xdg-user-dirs-gtk-update </span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(develop-3.10.4) testuser@python-pc:~$ </span><br></pre></td></tr></table></figure>
 
-<p>確認画面が出るので「Update Names」をクリックすると、下記のように英語の名前に切り替わります。 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls </span><br><span class="line">Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos </span><br></pre></td></tr></table></figure>
-<p>GUIで操作するのが面倒な場合は下記でもできるようですが、日本語のフォルダが残ってしまいました。<br>何かやり方が悪い？のか不明です。</p>
-<p>$ LANG&#x3D;C xdg-user-dirs-update –force </p>
-<h1 id="ネットワーク設定-IP固定"><a href="#ネットワーク設定-IP固定" class="headerlink" title="ネットワーク設定　IP固定"></a>ネットワーク設定　IP固定</h1><p>そのうち書きます</p>
+<p>pythonのバージョンは、指定した3.10.4になっています</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python --version</span><br><span class="line">Python 3.10.4</span><br></pre></td></tr></table></figure>
+
+
+<p>もう一方のdevelop-3.11.2に変更してみます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv <span class="built_in">local</span> develop-3.11.2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(develop-3.11.2) testuser@python-pc:~$ </span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python --version</span><br><span class="line">Python 3.11.2</span><br></pre></td></tr></table></figure>
+
+<p>最後に、開発専用の環境から抜けてみます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv <span class="built_in">local</span> 3.11.2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">testuser@python-pc:~$ </span><br></pre></td></tr></table></figure>
+
+<p>環境名が消えました。</p>
+<p>このようにして、環境を切り替えて使用できるようになりました。</p>
 
     </div>
 
@@ -299,20 +300,18 @@
           <div class="post-tags">
               <a href="/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/" rel="tag"><i class="fa fa-tag"></i> 環境構築</a>
               <a href="/tags/Ubuntu/" rel="tag"><i class="fa fa-tag"></i> Ubuntu</a>
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/11/02/ubuntu-on-hyperv/" rel="prev" title="Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築">
-                  <i class="fa fa-chevron-left"></i> Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築
+                <a href="/2023/02/23/python-install/" rel="prev" title="Ubuntu ServerにPythonとpyenvをインストールして開発環境を構築した時のメモ">
+                  <i class="fa fa-chevron-left"></i> Ubuntu ServerにPythonとpyenvをインストールして開発環境を構築した時のメモ
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/07/03/docker-commands/" rel="next" title="よく使うDockerコマンドの備忘録">
-                  よく使うDockerコマンドの備忘録 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
