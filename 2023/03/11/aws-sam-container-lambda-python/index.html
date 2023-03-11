@@ -28,7 +28,7 @@
 <meta property="og:description" content="概要先の記事でコンテナLambdaを実行できるようになりました。 AWS SAMでコンテナLambdaを作成する ですが、ローカルでいろいろ触っている開発環境がUbuntuなので、できれば同じものを使いたいと思い、Ubuntu 22.04のコンテナイメージを使用してLambdaのHello Worldを実行させてみます。">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2023-03-11T14:20:41.000Z">
-<meta property="article:modified_time" content="2023-03-11T14:58:01.694Z">
+<meta property="article:modified_time" content="2023-03-11T14:58:58.365Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="Ubuntu">
 <meta property="article:tag" content="AWS">
@@ -223,7 +223,7 @@
       <span class="post-meta-item-text">投稿日</span>
       
 
-      <time title="作成日：2023-03-11 23:20:41 / 修正日：23:58:01" itemprop="dateCreated datePublished" datetime="2023-03-11T23:20:41+09:00">2023-03-11</time>
+      <time title="作成日：2023-03-11 23:20:41 / 修正日：23:58:58" itemprop="dateCreated datePublished" datetime="2023-03-11T23:20:41+09:00">2023-03-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -264,7 +264,7 @@
 <p>このOSを調べたところAmazon Linux 2のようでした。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ uname -a</span><br><span class="line">Linux ddb82d29db91 5.15.0-67-generic #74-Ubuntu SMP Wed Feb 22 14:14:39 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux</span><br><span class="line">$ cat /etc/os-release</span><br><span class="line">NAME=&quot;Amazon Linux&quot;</span><br><span class="line">VERSION=&quot;2&quot;</span><br><span class="line">ID=&quot;amzn&quot;</span><br><span class="line">ID_LIKE=&quot;centos rhel fedora&quot;</span><br><span class="line">VERSION_ID=&quot;2&quot;</span><br><span class="line">PRETTY_NAME=&quot;Amazon Linux 2&quot;</span><br><span class="line">ANSI_COLOR=&quot;0;33&quot;</span><br><span class="line">CPE_NAME=&quot;cpe:2.3:o:amazon:amazon_linux:2&quot;</span><br><span class="line">HOME_URL=&quot;https://amazonlinux.com/&quot;</span><br><span class="line">VARIANT_ID=&quot;202302240956-2.0.1033.0&quot;</span><br></pre></td></tr></table></figure>
 
-<p>sam-app&#x2F;hello_world&#x2F;Dockerfile の中身を見ると、下記のようになっていました。</p>
+<p>sam-app&#x2F;hello_world&#x2F;Dockerfile の中身は以下のとおりです。</p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> public.ecr.aws/lambda/python:<span class="number">3.9</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> app.py requirements.txt ./</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> python3.9 -m pip install -r requirements.txt -t .</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Command can be overwritten by providing a different command in the template directly.</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;app.lambda_handler&quot;</span>]</span></span><br></pre></td></tr></table></figure>
 
 
