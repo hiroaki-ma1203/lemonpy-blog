@@ -28,7 +28,7 @@
 <meta property="og:description" content="概要先の記事でコンテナLambdaを実行できるようになりました。 AWS SAMでコンテナLambdaを作成する ですが、ローカルでいろいろ触っている開発環境がUbuntuなので、できれば同じものを使いたいと思い、Ubuntu 22.04のコンテナイメージを使用してLambdaのHello Worldを実行させてみます。">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2023-03-11T14:20:41.000Z">
-<meta property="article:modified_time" content="2023-03-11T14:58:58.365Z">
+<meta property="article:modified_time" content="2023-03-11T15:07:18.973Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="Ubuntu">
 <meta property="article:tag" content="AWS">
@@ -221,9 +221,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">投稿日</span>
-      
 
-      <time title="作成日：2023-03-11 23:20:41 / 修正日：23:58:58" itemprop="dateCreated datePublished" datetime="2023-03-11T23:20:41+09:00">2023-03-11</time>
+      <time title="作成日：2023-03-11 23:20:41" itemprop="dateCreated datePublished" datetime="2023-03-11T23:20:41+09:00">2023-03-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">編集日</span>
+      <time title="修正日：2023-03-12 00:07:18" itemprop="dateModified" datetime="2023-03-12T00:07:18+09:00">2023-03-12</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -277,7 +283,7 @@
 <p>以下のように出力され、sam buildが失敗しました。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ sam build</span><br><span class="line">Building image for HelloWorldFunction function</span><br><span class="line">Setting DockerBuildArgs: &#123;&#125; for HelloWorldFunction function</span><br><span class="line">Step 1/4 : FROM ubuntu:22.04</span><br><span class="line">22.04: Pulling from library/ubuntu </span><br><span class="line">76769433fd8a: Pull complete </span><br><span class="line">Status: Downloaded newer image for ubuntu:22.04 ---&gt; 74f2314a03de</span><br><span class="line">Step 2/4 : COPY app.py requirements.txt ./</span><br><span class="line"> ---&gt; 37401066b32b</span><br><span class="line">Step 3/4 : RUN python3.9 -m pip install -r requirements.txt -t .</span><br><span class="line"> ---&gt; Running in 417b8d8b6715</span><br><span class="line">/bin/sh: 1: python3.9: not found</span><br><span class="line"></span><br><span class="line">Build Failed</span><br><span class="line">Error: HelloWorldFunction failed to build: The command &#x27;/bin/sh -c python3.9 -m pip install -r requirements.txt -t .&#x27; returned a non-zero code: 127</span><br></pre></td></tr></table></figure>
 
-<p>UbuntuのイメージにはPython3.9が入っていないようです。<br>Dockerfile を少しいじって中身を出力させてみます。</p>
+<p>UbuntuのイメージにはPython3.9が入っていないようなので、<br>Dockerfile を少し修正して中身を出力させてみます。</p>
 <figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:22.04</span><br><span class="line"></span><br><span class="line">COPY app.py requirements.txt ./</span><br><span class="line"></span><br><span class="line"><span class="addition">+ RUN apt list --installed</span></span><br><span class="line"><span class="deletion">- RUN python3.9 -m pip install -r requirements.txt -t .</span></span><br><span class="line"></span><br><span class="line"># Command can be overwritten by providing a different command in the template directly.</span><br><span class="line">CMD [&quot;app.lambda_handler&quot;]</span><br></pre></td></tr></table></figure>
 
 <p>sam build するとDocker Buildのログに以下のように出力されます。</p>
