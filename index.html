@@ -129,18 +129,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">ポスト</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">カテゴリ</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">タグ</span></a>
       </div>
   </nav>
@@ -174,6 +174,119 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2023/11/26/aws-amplify-react-tutorial/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/11/26/aws-amplify-react-tutorial/" class="post-title-link" itemprop="url">AWS Amplify のチュートリアルをやってみた時に詰まったところのメモ</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+
+      <time title="作成日：2023-11-26 22:18:51" itemprop="dateCreated datePublished" datetime="2023-11-26T22:18:51+09:00">2023-11-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/AWS/" itemprop="url" rel="index"><span itemprop="name">AWS</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Framework/" itemprop="url" rel="index"><span itemprop="name">Framework</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Framework/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>DynamoDBの中身を扱うツールが欲しくなったので、<br>今更ですがAmplifyを使ってみようと思い、公式のチュートリアルをやってみました。</p>
+<p>ちなみにReactも触ったことがなく、今回初めて使っているので勘違いしている部分があるかもしれませんが、ご了承ください。</p>
+<p>チュートリアルが作成された当時に比べてAmplifyのバージョンが上がっているせいか、所々でエラーが出ていたので、調べた記録を残しておくことにしました。</p>
+<h2 id="実施したチュートリアルとエラーの概要"><a href="#実施したチュートリアルとエラーの概要" class="headerlink" title="実施したチュートリアルとエラーの概要"></a>実施したチュートリアルとエラーの概要</h2><p>今回試したのは以下のチュートリアルです。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://aws.amazon.com/jp/getting-started/hands-on/build-react-app-amplify-graphql/">フルスタック React アプリケーションを構築する</a></li>
+</ul>
+<p>エラーの概要としては、「<a target="_blank" rel="noopener" href="https://aws.amazon.com/jp/getting-started/hands-on/build-react-app-amplify-graphql/module-four/">モジュール 4: GraphQL API とデータベースを追加する</a>」で、以下のようにimportする部分があるのですが、amplifyのライブラリがバージョンアップして使い方が変わっているようで、このままコピペするとエラーが出ました。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="variable constant_">API</span> &#125; <span class="keyword">from</span> <span class="string">&quot;aws-amplify&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Amplify Dev Centerのドキュメントを参考にして修正したところ正常に動作したので、<br>おそらくこれで合っているのだろうと思っています。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.amplify.aws/javascript/build-a-backend/graphqlapi/connect-to-api/#use-generated-graphql-queries-mutations-and-subscriptions">(参考) Use generated GraphQL queries, mutations, and subscriptions</a></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; generateClient &#125; <span class="keyword">from</span> <span class="string">&#x27;aws-amplify/api&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>詳細は続きを見てください。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/11/26/aws-amplify-react-tutorial/#more" rel="contents">
+                続きを読む &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1019,100 +1132,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2023/02/23/python-install/#more" rel="contents">
-                続きを読む &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2023/01/07/ubuntu-server-setup/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="hiroaki-ma1203">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lemonpy.net">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Lemonpy.net">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/07/ubuntu-server-setup/" class="post-title-link" itemprop="url">Ubuntu Serverで開発環境を立てた時のメモ</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">投稿日</span>
-      
-
-      <time title="作成日：2023-01-07 07:47:36 / 修正日：16:52:19" itemprop="dateCreated datePublished" datetime="2023-01-07T07:47:36+09:00">2023-01-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">カテゴリ</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
-        </span>
-          、
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Hyper-V/" itemprop="url" rel="index"><span itemprop="name">Hyper-V</span></a>
-        </span>
-          、
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/" itemprop="url" rel="index"><span itemprop="name">Ubuntu</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>Ubuntu ServerをHyper-Vに構築し、VSCodeからRemote-SSHでリモート接続できるようにします。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/01/07/ubuntu-server-setup/#more" rel="contents">
                 続きを読む &raquo;
               </a>
             </div>
