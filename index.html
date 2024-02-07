@@ -129,7 +129,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">ポスト</span>
         </a>
       </div>
@@ -183,6 +183,114 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2024/02/07/docker-redmine-update/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/02/07/docker-redmine-update/" class="post-title-link" itemprop="url">Dockerを使ったRedmine環境のMySQLをバージョンアップした</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+
+      <time title="作成日：2024-02-07 22:51:42" itemprop="dateCreated datePublished" datetime="2024-02-07T22:51:42+09:00">2024-02-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>以前の記事(<a href="/2023/02/25/docker-install/" title="Dockerを使ったRedmine環境の構築">Dockerを使ったRedmine環境の構築</a>)で構築したRedmineのMySQLをバージョンアップしてみました。</p>
+<p>当初はMySQL5.7を使いましたが、今回MySQL8.3.0へバージョンアップしたので、その時のことを記録として残します。</p>
+<h1 id="今回やったこと"><a href="#今回やったこと" class="headerlink" title="今回やったこと"></a>今回やったこと</h1><ul>
+<li>docker-compose.yml の変更</li>
+<li>コンテナを更新</li>
+<li>Githubのコード更新とバージョンリリース</li>
+</ul>
+<h1 id="成果物"><a href="#成果物" class="headerlink" title="成果物"></a>成果物</h1><p>今回作成した成果物をGithubで公開しています。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/hiroaki-ma1203/docker-redmine-install/tree/v1.0.0">https://github.com/hiroaki-ma1203/docker-redmine-install/tree/v1.0.0</a></li>
+</ul>
+<h1 id="docker-compose-yml-の変更"><a href="#docker-compose-yml-の変更" class="headerlink" title="docker-compose.yml の変更"></a>docker-compose.yml の変更</h1><p>1行だけですが、以下の部分を変更しました。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  mysql:</span><br><span class="line"><span class="deletion">-   image: mysql:5.7</span></span><br><span class="line"><span class="addition">+   image: mysql:8.3.0</span></span><br><span class="line">    container_name: mysql</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="コンテナを更新"><a href="#コンテナを更新" class="headerlink" title="コンテナを更新"></a>コンテナを更新</h1><p>docker-compose でコンテナを更新しました。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>コマンド実行後は数分の間 Redmine にアクセスできなくなり、ログを確認すると MySQL のバージョンアップ処理中でした（当たり前ですが・・・）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs -f mysql</span><br></pre></td></tr></table></figure>
+<p>以下のようなログが出ます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2024-02-06T10:24:44.236571Z 5 [System] [MY-013381] [Server] Server upgrade from &#x27;50700&#x27; to &#x27;80300&#x27; started.</span><br><span class="line">2024-02-06T10:26:38.807725Z 5 [System] [MY-013381] [Server] Server upgrade from &#x27;50700&#x27; to &#x27;80300&#x27; completed.</span><br></pre></td></tr></table></figure>
+
+<p>バージョンアップが完了したら、今まで通り使えることを確認しました。</p>
+<h1 id="Githubのコード更新とバージョンリリース"><a href="#Githubのコード更新とバージョンリリース" class="headerlink" title="Githubのコード更新とバージョンリリース"></a>Githubのコード更新とバージョンリリース</h1><p>今回は初めての更新ということもあり、折角なのでバージョンリリースをしてみました。</p>
+<p>参考にしたのは、 <a target="_blank" rel="noopener" href="https://semver.org/lang/ja/">Semantic Versioning 2.0.0</a> です。</p>
+<p>MySQL5.7を使用していた時のものには “v0.1.0” というタグを付けて “0.1.0” としてリリースし、今回の更新版には “v1.0.0” というタグをつけて “1.0.0” としてリリースしました。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2023/12/10/docker-redmine-install/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -211,9 +319,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">投稿日</span>
-      
 
-      <time title="作成日：2023-12-10 22:45:18 / 修正日：22:45:33" itemprop="dateCreated datePublished" datetime="2023-12-10T22:45:18+09:00">2023-12-10</time>
+      <time title="作成日：2023-12-10 22:45:18" itemprop="dateCreated datePublished" datetime="2023-12-10T22:45:18+09:00">2023-12-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">編集日</span>
+      <time title="修正日：2024-02-07 22:49:43" itemprop="dateModified" datetime="2024-02-07T22:49:43+09:00">2024-02-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1060,101 +1174,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2023/02/24/python-virtualenv-switch/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="hiroaki-ma1203">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lemonpy.net">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Lemonpy.net">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/02/24/python-virtualenv-switch/" class="post-title-link" itemprop="url">virtualenv使用して複数の開発環境を切り替えて使えるようにした時のメモ</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">投稿日</span>
-      
-
-      <time title="作成日：2023-02-24 14:46:24 / 修正日：23:46:24" itemprop="dateCreated datePublished" datetime="2023-02-24T14:46:24+09:00">2023-02-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">カテゴリ</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
-        </span>
-          、
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/" itemprop="url" rel="index"><span itemprop="name">Ubuntu</span></a>
-        </span>
-          、
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="UbuntuへのVirtualenvのインストール"><a href="#UbuntuへのVirtualenvのインストール" class="headerlink" title="UbuntuへのVirtualenvのインストール"></a>UbuntuへのVirtualenvのインストール</h1><p>pythonでいろいろなライブラリを入れていくと管理が大変そうなので、開発環境を分けられるようにvirtualenvも入れておきます。</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/pyenv/pyenv-virtualenv#installation">(Github) pyenv&#x2F;pyenv-virtualenvインストール方法</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/02/24/python-virtualenv-switch/#more" rel="contents">
-                続きを読む &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="次のページ"></i></a>
   </nav>
@@ -1168,7 +1187,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-lemon"></i>
   </span>

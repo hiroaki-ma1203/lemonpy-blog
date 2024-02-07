@@ -20,29 +20,29 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="DockerfileについてDockerfileに関するメモ書き">
+    <meta name="description" content="概要以前の記事(Dockerを使ったRedmine環境の構築)で構築したRedmineのMySQLをバージョンアップしてみました。 当初はMySQL5.7を使いましたが、今回MySQL8.3.0へバージョンアップしたので、その時のことを記録として残します。 今回やったこと docker-compose.yml の変更 コンテナを更新 Githubのコード更新とバージョンリリース  成果物今回作成し">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dockerfileの備忘録">
-<meta property="og:url" content="http://lemonpy.net/2022/07/24/dockerfile-memo/index.html">
+<meta property="og:title" content="Dockerを使ったRedmine環境のMySQLをバージョンアップした">
+<meta property="og:url" content="http://lemonpy.net/2024/02/07/docker-redmine-update/index.html">
 <meta property="og:site_name" content="Lemonpy.net">
-<meta property="og:description" content="DockerfileについてDockerfileに関するメモ書き">
+<meta property="og:description" content="概要以前の記事(Dockerを使ったRedmine環境の構築)で構築したRedmineのMySQLをバージョンアップしてみました。 当初はMySQL5.7を使いましたが、今回MySQL8.3.0へバージョンアップしたので、その時のことを記録として残します。 今回やったこと docker-compose.yml の変更 コンテナを更新 Githubのコード更新とバージョンリリース  成果物今回作成し">
 <meta property="og:locale" content="ja_JP">
-<meta property="article:published_time" content="2022-07-24T01:49:34.000Z">
-<meta property="article:modified_time" content="2023-02-25T05:59:16.551Z">
+<meta property="article:published_time" content="2024-02-07T13:51:42.000Z">
+<meta property="article:modified_time" content="2024-02-07T13:51:42.095Z">
 <meta property="article:author" content="hiroaki-ma1203">
-<meta property="article:tag" content="環境構築">
 <meta property="article:tag" content="Docker">
+<meta property="article:tag" content="Redmine">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://lemonpy.net/2022/07/24/dockerfile-memo/">
+<link rel="canonical" href="http://lemonpy.net/2024/02/07/docker-redmine-update/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2022/07/24/dockerfile-memo/","path":"2022/07/24/dockerfile-memo/","title":"Dockerfileの備忘録"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2024/02/07/docker-redmine-update/","path":"2024/02/07/docker-redmine-update/","title":"Dockerを使ったRedmine環境のMySQLをバージョンアップした"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Dockerfileの備忘録 | Lemonpy.net</title>
+<title>Dockerを使ったRedmine環境のMySQLをバージョンアップした | Lemonpy.net</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9164967087700307"crossorigin="anonymous"></script>
@@ -121,7 +121,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dockerfile%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6"><span class="nav-number">1.</span> <span class="nav-text">Dockerfileについて</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E8%A8%98%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">基本的な記述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB"><span class="nav-number">1.2.</span> <span class="nav-text">サンプル</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8A%E5%9B%9E%E3%82%84%E3%81%A3%E3%81%9F%E3%81%93%E3%81%A8"><span class="nav-number">2.</span> <span class="nav-text">今回やったこと</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%88%90%E6%9E%9C%E7%89%A9"><span class="nav-number">3.</span> <span class="nav-text">成果物</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#docker-compose-yml-%E3%81%AE%E5%A4%89%E6%9B%B4"><span class="nav-number">4.</span> <span class="nav-text">docker-compose.yml の変更</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%82%B3%E3%83%B3%E3%83%86%E3%83%8A%E3%82%92%E6%9B%B4%E6%96%B0"><span class="nav-number">5.</span> <span class="nav-text">コンテナを更新</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Github%E3%81%AE%E3%82%B3%E3%83%BC%E3%83%89%E6%9B%B4%E6%96%B0%E3%81%A8%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9"><span class="nav-number">6.</span> <span class="nav-text">Githubのコード更新とバージョンリリース</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -191,7 +191,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
-    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2022/07/24/dockerfile-memo/">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2024/02/07/docker-redmine-update/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -204,12 +204,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Dockerfileの備忘録 | Lemonpy.net">
+      <meta itemprop="name" content="Dockerを使ったRedmine環境のMySQLをバージョンアップした | Lemonpy.net">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Dockerfileの備忘録
+          Dockerを使ったRedmine環境のMySQLをバージョンアップした
         </h1>
 
         <div class="post-meta-container">
@@ -220,14 +220,7 @@
       </span>
       <span class="post-meta-item-text">投稿日</span>
 
-      <time title="作成日：2022-07-24 10:49:34" itemprop="dateCreated datePublished" datetime="2022-07-24T10:49:34+09:00">2022-07-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">編集日</span>
-      <time title="修正日：2023-02-25 14:59:16" itemprop="dateModified" datetime="2023-02-25T14:59:16+09:00">2023-02-25</time>
+      <time title="作成日：2024-02-07 22:51:42" itemprop="dateCreated datePublished" datetime="2024-02-07T22:51:42+09:00">2024-02-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -253,15 +246,33 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="Dockerfileについて"><a href="#Dockerfileについて" class="headerlink" title="Dockerfileについて"></a>Dockerfileについて</h1><p>Dockerfileに関するメモ書き</p>
-<span id="more"></span>
+        <h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>以前の記事(<a href="/2023/02/25/docker-install/" title="Dockerを使ったRedmine環境の構築">Dockerを使ったRedmine環境の構築</a>)で構築したRedmineのMySQLをバージョンアップしてみました。</p>
+<p>当初はMySQL5.7を使いましたが、今回MySQL8.3.0へバージョンアップしたので、その時のことを記録として残します。</p>
+<h1 id="今回やったこと"><a href="#今回やったこと" class="headerlink" title="今回やったこと"></a>今回やったこと</h1><ul>
+<li>docker-compose.yml の変更</li>
+<li>コンテナを更新</li>
+<li>Githubのコード更新とバージョンリリース</li>
+</ul>
+<h1 id="成果物"><a href="#成果物" class="headerlink" title="成果物"></a>成果物</h1><p>今回作成した成果物をGithubで公開しています。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/hiroaki-ma1203/docker-redmine-install/tree/v1.0.0">https://github.com/hiroaki-ma1203/docker-redmine-install/tree/v1.0.0</a></li>
+</ul>
+<h1 id="docker-compose-yml-の変更"><a href="#docker-compose-yml-の変更" class="headerlink" title="docker-compose.yml の変更"></a>docker-compose.yml の変更</h1><p>1行だけですが、以下の部分を変更しました。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  mysql:</span><br><span class="line"><span class="deletion">-   image: mysql:5.7</span></span><br><span class="line"><span class="addition">+   image: mysql:8.3.0</span></span><br><span class="line">    container_name: mysql</span><br></pre></td></tr></table></figure>
 
-<p>Dockerエンジンのインストール方法はこちら<br><a href="/2023/02/25/docker-install/" title="Dockerのインストールに関する記事">Ubuntu ServerにDockerをインストールした時のメモ</a></p>
-<h2 id="基本的な記述"><a href="#基本的な記述" class="headerlink" title="基本的な記述"></a>基本的な記述</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FROM &lt;Image&gt;:&lt;tag&gt;</span><br><span class="line"></span><br><span class="line">COPU &lt;コピー元ファイルパス&gt; &lt;コピー先フォルダパス&gt;</span><br><span class="line"></span><br><span class="line">RUN &lt;実行するコマンド　pip installなど&gt;</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [ &lt;実行コマンド&gt; ]</span><br><span class="line"></span><br><span class="line">CMD [ &lt;実行コマンド&gt; ]</span><br></pre></td></tr></table></figure>
 
+<h1 id="コンテナを更新"><a href="#コンテナを更新" class="headerlink" title="コンテナを更新"></a>コンテナを更新</h1><p>docker-compose でコンテナを更新しました。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
 
+<p>コマンド実行後は数分の間 Redmine にアクセスできなくなり、ログを確認すると MySQL のバージョンアップ処理中でした（当たり前ですが・・・）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs -f mysql</span><br></pre></td></tr></table></figure>
+<p>以下のようなログが出ます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2024-02-06T10:24:44.236571Z 5 [System] [MY-013381] [Server] Server upgrade from &#x27;50700&#x27; to &#x27;80300&#x27; started.</span><br><span class="line">2024-02-06T10:26:38.807725Z 5 [System] [MY-013381] [Server] Server upgrade from &#x27;50700&#x27; to &#x27;80300&#x27; completed.</span><br></pre></td></tr></table></figure>
 
-<h2 id="サンプル"><a href="#サンプル" class="headerlink" title="サンプル"></a>サンプル</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:22.04</span><br><span class="line"></span><br><span class="line">RUN apt-get update \</span><br><span class="line">    &amp;&amp; apt upgrade -y \</span><br><span class="line">    &amp;&amp; apt install -y \</span><br><span class="line">    tesseract-ocr \</span><br><span class="line">    tesseract-ocr-jpn \</span><br><span class="line">    libtesseract-dev \</span><br><span class="line">    python3 \</span><br><span class="line">    python3-pip\</span><br><span class="line">    &amp;&amp; apt clean \</span><br><span class="line">    &amp;&amp; rm -rf /var/lib/apt/lists/*</span><br><span class="line"></span><br><span class="line">RUN pip3 install awslambdaric</span><br><span class="line"></span><br><span class="line">ARG APP_DIR=&quot;/home/app/&quot;</span><br><span class="line">RUN mkdir -p $&#123;APP_DIR&#125;</span><br><span class="line">WORKDIR $&#123;APP_DIR&#125;</span><br><span class="line">COPY app.py ocr.py requirements.txt $&#123;APP_DIR&#125;</span><br><span class="line"></span><br><span class="line">ARG TESSDATA_DIR=&quot;/home/app/tessdata/&quot;</span><br><span class="line">RUN mkdir -p $&#123;TESSDATA_DIR&#125;</span><br><span class="line">COPY tessdata/ $&#123;TESSDATA_DIR&#125;</span><br><span class="line"></span><br><span class="line">RUN python3 -m pip install -r requirements.txt -t $&#123;APP_DIR&#125;</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [ &quot;/usr/bin/python3&quot;, &quot;-m&quot;, &quot;awslambdaric&quot; ]</span><br><span class="line">CMD [&quot;app.lambda_handler&quot;]</span><br></pre></td></tr></table></figure>
+<p>バージョンアップが完了したら、今まで通り使えることを確認しました。</p>
+<h1 id="Githubのコード更新とバージョンリリース"><a href="#Githubのコード更新とバージョンリリース" class="headerlink" title="Githubのコード更新とバージョンリリース"></a>Githubのコード更新とバージョンリリース</h1><p>今回は初めての更新ということもあり、折角なのでバージョンリリースをしてみました。</p>
+<p>参考にしたのは、 <a target="_blank" rel="noopener" href="https://semver.org/lang/ja/">Semantic Versioning 2.0.0</a> です。</p>
+<p>MySQL5.7を使用していた時のものには “v0.1.0” というタグを付けて “0.1.0” としてリリースし、今回の更新版には “v1.0.0” というタグをつけて “1.0.0” としてリリースしました。</p>
 
     </div>
 
@@ -271,22 +282,19 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/" rel="tag"><i class="fa fa-tag"></i> 環境構築</a>
               <a href="/tags/Docker/" rel="tag"><i class="fa fa-tag"></i> Docker</a>
+              <a href="/tags/Redmine/" rel="tag"><i class="fa fa-tag"></i> Redmine</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/07/03/docker-commands/" rel="prev" title="よく使うDockerコマンドの備忘録">
-                  <i class="fa fa-chevron-left"></i> よく使うDockerコマンドの備忘録
+                <a href="/2023/12/10/docker-redmine-install/" rel="prev" title="Dockerを使ったRedmine環境の構築">
+                  <i class="fa fa-chevron-left"></i> Dockerを使ったRedmine環境の構築
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/01/07/ubuntu-server-setup/" rel="next" title="Ubuntu Serverで開発環境を立てた時のメモ">
-                  Ubuntu Serverで開発環境を立てた時のメモ <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
