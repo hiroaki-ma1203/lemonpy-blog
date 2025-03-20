@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="概要AWS CLIで個人的によく使うコマンドをまとめてみました。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AWS CLIで個人的によく使うコマンドまとめ">
+<meta property="og:url" content="http://lemonpy.net/2023/02/28/aws-cli-command/index.html">
+<meta property="og:site_name" content="Lemonpy.net">
+<meta property="og:description" content="概要AWS CLIで個人的によく使うコマンドをまとめてみました。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2023-02-28T20:13:15.000Z">
+<meta property="article:modified_time" content="2025-03-16T10:39:27.739Z">
+<meta property="article:author" content="hiroaki-ma1203">
+<meta property="article:tag" content="Ubuntu">
+<meta property="article:tag" content="AWS">
+<meta property="article:tag" content="AWS-CLI">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://lemonpy.net/2023/02/28/aws-cli-command/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2023/02/28/aws-cli-command/","path":"2023/02/28/aws-cli-command/","title":"AWS CLIで個人的によく使うコマンドまとめ"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>AWS CLIで個人的によく使うコマンドまとめ | Lemonpy.net</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-H628V853SK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="ナビゲーションバーの切り替え" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lemonpy.net</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="検索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>ホーム</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>プロフィール</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>タグ</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>カテゴリ</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>アーカイブ</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>検索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="検索…" spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          見出し
+        </li>
+        <li class="sidebar-nav-overview">
+          概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#configure"><span class="nav-number">2.</span> <span class="nav-text">configure</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#s3"><span class="nav-number">3.</span> <span class="nav-text">s3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%83%90%E3%82%B1%E3%83%83%E3%83%88%E6%93%8D%E4%BD%9C"><span class="nav-number">3.1.</span> <span class="nav-text">バケット操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">オブジェクト操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EC2"><span class="nav-number">4.</span> <span class="nav-text">EC2</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="hiroaki-ma1203"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">hiroaki-ma1203</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">ポスト</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">カテゴリ</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">タグ</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hiroaki-ma1203" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hiroaki-ma1203" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2023/02/28/aws-cli-command/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="AWS CLIで個人的によく使うコマンドまとめ | Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AWS CLIで個人的によく使うコマンドまとめ
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+
+      <time title="作成日：2023-02-28 20:13:15" itemprop="dateCreated datePublished" datetime="2023-02-28T20:13:15+00:00">2023-02-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">編集日</span>
+      <time title="修正日：2025-03-16 10:39:27" itemprop="dateModified" datetime="2025-03-16T10:39:27+00:00">2025-03-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/AWS/" itemprop="url" rel="index"><span itemprop="name">AWS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>AWS CLIで個人的によく使うコマンドをまとめてみました。</p>
+<span id="more"></span>
+
+<p>細かく知りたいときは公式のリファレンスを参照。<br><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/cli/latest/index.html">リファレンス</a></p>
+<p>調べるのが面倒な時にこのメモを使います。</p>
+<h1 id="configure"><a href="#configure" class="headerlink" title="configure"></a>configure</h1><p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-configure-files.html">(公式) 設定ファイルと認証情報ファイルの設定</a></p>
+<p>名前付きプロファイルの作成、変更</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws configure --profile &lt;PROFILE NAME&gt;</span><br></pre></td></tr></table></figure>
+
+<p>名前付きプロファイルの一覧表示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws configure list-profiles</span><br></pre></td></tr></table></figure>
+
+<p>特定のパラメータだけを変更する</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws configure set region &lt;REGION&gt; --profile &lt;PROFILE NAME&gt;</span><br></pre></td></tr></table></figure>
+
+<p>特定のパラメータだけを空欄にする</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws configure set region &quot;&quot; --profile &lt;PROFILE NAME&gt;</span><br></pre></td></tr></table></figure>
+
+<p>プロファイルを削除する（全部のプロファイルが消えるので注意）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rm -rf ~/.aws/</span><br></pre></td></tr></table></figure>
+
+<p>プロファイルを個別に削除したい場合は、下記ファイルを開いて不要な部分を削除する</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ vi ~/.aws/config</span><br><span class="line">$ vi ~/.aws/credentials</span><br></pre></td></tr></table></figure>
+
+<p>おまけ (環境変数)</p>
+<p>毎回 <code>--profile &lt;PROFILE NAME&gt;</code> を入力するのは面倒なので、環境変数へ設定することにより毎回指定せずにすみます。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ export AWS_PROFILE=&lt;PROFILE NAME&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="s3"><a href="#s3" class="headerlink" title="s3"></a>s3</h1><p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-services-s3-commands.html">(公式) AWS CLI での高レベル (S3) コマンドの使用</a></p>
+<h2 id="バケット操作"><a href="#バケット操作" class="headerlink" title="バケット操作"></a>バケット操作</h2><p>バケットを作成する</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 mb s3://bucket-name</span><br></pre></td></tr></table></figure>
+
+<p>バケットを削除する(–forceは中身にオブジェクトが入っていても削除する)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 rb s3://bucket-name --force</span><br></pre></td></tr></table></figure>
+
+<p>バケットを一覧表示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 ls</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="オブジェクト操作"><a href="#オブジェクト操作" class="headerlink" title="オブジェクト操作"></a>オブジェクト操作</h2><p>オブジェクトの一覧</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 ls s3://bucket-name/example/</span><br></pre></td></tr></table></figure>
+
+<p>オブジェクトの削除</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 rm s3://bucket-name/example/filename.txt</span><br></pre></td></tr></table></figure>
+
+<p>オブジェクトの削除(–recursiveはフォルダ内にファイルがあっても削除する)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 rm s3://bucket-name/example --recursive</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-managing-objects-copy">(公式) オブジェクトのコピーは多いのでよく使うもの以外は公式参照</a></p>
+<p>オブジェクトのコピー (bucket-aのexampleをbucket-bへコピー)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 cp s3://bucket-a/example s3://bucket-b/</span><br></pre></td></tr></table></figure>
+
+<p>オブジェクトのコピー (bucket-aのfile.txtをローカルのカレントディレクトリへコピー)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 cp s3://bucket-a/file.txt ./</span><br></pre></td></tr></table></figure>
+
+<p>オブジェクトのコピー (bucket-aの全オブジェクトをローカルのカレントディレクトリへコピー)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 cp s3://bucket-a/example ./ --recursive</span><br></pre></td></tr></table></figure>
+
+<p>*.txtファイルを除外してコピー (–exclude)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 cp . s3://my-bucket/path --exclude &quot;*.txt&quot;</span><br></pre></td></tr></table></figure>
+
+<p>*.txtファイルだけを抽出してコピー (–include)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws s3 cp . s3://my-bucket/path --include &quot;*.txt&quot;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="EC2"><a href="#EC2" class="headerlink" title="EC2"></a>EC2</h1><p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-services-ec2-instances.html">(公式) Amazon EC2 インスタンスの起動、一覧表示、および終了</a></p>
+<p>インスタンスの一覧表示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ aws ec2 describe-instances</span><br></pre></td></tr></table></figure>
+
+<p>インスタンスへのタグの追加</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ aws ec2 create-tags --resources &lt;INSTANCE ID&gt; --tags Key=&lt;TAG NAME&gt;,Value=&lt;TAG VALUE&gt;</span><br><span class="line"></span><br><span class="line">$ aws ec2 create-tags --resources i-5203422c --tags Key=Name,Value=MyInstance</span><br></pre></td></tr></table></figure>
+
+<p>特定のタグを持つインスタンス</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ aws ec2 describe-instances --filters &quot;Name=tag:&lt;TAG NAME&gt;,Values=&lt;TAG VALUE&gt;&quot;</span><br><span class="line"></span><br><span class="line">$ aws ec2 describe-instances --filters &quot;Name=tag:Name,Values=MyInstance&quot;</span><br></pre></td></tr></table></figure>
+
+<p>インスタンスの起動</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ aws ec2 start-instances --instance-ids &lt;INSTANCE ID&gt; &lt;INSTANCE ID&gt; ...</span><br><span class="line"></span><br><span class="line">aws ec2 start-instances --instance-ids i-1234567890abcdef0</span><br></pre></td></tr></table></figure>
+
+
+<p>インスタンスの停止</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ aws ec2 stop-instances --instance-ids &lt;INSTANCE ID&gt; &lt;INSTANCE ID&gt; ...</span><br><span class="line"></span><br><span class="line">aws ec2 stop-instances --instance-ids i-1234567890abcdef0</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Ubuntu/" rel="tag"><i class="fa fa-tag"></i> Ubuntu</a>
+              <a href="/tags/AWS/" rel="tag"><i class="fa fa-tag"></i> AWS</a>
+              <a href="/tags/AWS-CLI/" rel="tag"><i class="fa fa-tag"></i> AWS-CLI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/02/27/aws-cli-install/" rel="prev" title="Ubuntu ServerにAWS CLIをインストールした時のメモ">
+                  <i class="fa fa-angle-left"></i> Ubuntu ServerにAWS CLIをインストールした時のメモ
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/03/aws-sam-install/" rel="next" title="Ubuntu ServerにAWS SAMをインストールした時のメモ">
+                  Ubuntu ServerにAWS SAMをインストールした時のメモ <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-lemon"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">hiroaki-ma1203</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

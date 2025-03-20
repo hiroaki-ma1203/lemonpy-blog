@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="概要Ubuntu ServerへPythonとpyenvをインストールして、開発環境を構築したので、その時のメモ。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu ServerにPythonとpyenvをインストールして開発環境を構築した時のメモ">
+<meta property="og:url" content="http://lemonpy.net/2023/02/23/python-install/index.html">
+<meta property="og:site_name" content="Lemonpy.net">
+<meta property="og:description" content="概要Ubuntu ServerへPythonとpyenvをインストールして、開発環境を構築したので、その時のメモ。">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2023-02-23T13:52:48.000Z">
+<meta property="article:modified_time" content="2025-03-16T10:39:27.739Z">
+<meta property="article:author" content="hiroaki-ma1203">
+<meta property="article:tag" content="Ubuntu">
+<meta property="article:tag" content="環境構築">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://lemonpy.net/2023/02/23/python-install/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2023/02/23/python-install/","path":"2023/02/23/python-install/","title":"Ubuntu ServerにPythonとpyenvをインストールして開発環境を構築した時のメモ"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Ubuntu ServerにPythonとpyenvをインストールして開発環境を構築した時のメモ | Lemonpy.net</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-H628V853SK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="ナビゲーションバーの切り替え" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lemonpy.net</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="検索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>ホーム</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>プロフィール</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>タグ</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>カテゴリ</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>アーカイブ</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>検索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="検索…" spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          見出し
+        </li>
+        <li class="sidebar-nav-overview">
+          概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ubuntu%E3%81%B8%E3%81%AEpyenv%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">2.</span> <span class="nav-text">Ubuntuへのpyenvのインストール</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pyenv%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">2.1.</span> <span class="nav-text">pyenvのインストール</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pyenv%E3%81%AEPATH%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B"><span class="nav-number">2.2.</span> <span class="nav-text">pyenvのPATHを設定する</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E3%82%92%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E6%8C%87%E5%AE%9A%E3%81%97%E3%81%A6%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">2.3.</span> <span class="nav-text">pythonをバージョン指定してインストール</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pyenv%E3%81%A7python%E3%82%92%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E6%8C%87%E5%AE%9A%E3%81%97%E3%81%A6%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B%E3%81%A8%E3%81%8D%E3%81%AB%E5%A4%B1%E6%95%97%E3%81%97%E3%81%9F%E5%A0%B4%E5%90%88%E3%81%AE%E5%AF%BE%E5%87%A6%E6%B3%95"><span class="nav-number">2.4.</span> <span class="nav-text">pyenvでpythonをバージョン指定してインストールするときに失敗した場合の対処法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E3%82%92%E3%83%90%E3%83%BC%E3%82%B8%E3%83%A7%E3%83%B3%E6%8C%87%E5%AE%9A%E3%81%97%E3%81%A6%E9%81%A9%E7%94%A8"><span class="nav-number">2.5.</span> <span class="nav-text">pythonをバージョン指定して適用</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="hiroaki-ma1203"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">hiroaki-ma1203</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">ポスト</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">カテゴリ</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">タグ</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hiroaki-ma1203" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hiroaki-ma1203" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2023/02/23/python-install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Ubuntu ServerにPythonとpyenvをインストールして開発環境を構築した時のメモ | Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ubuntu ServerにPythonとpyenvをインストールして開発環境を構築した時のメモ
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+
+      <time title="作成日：2023-02-23 13:52:48" itemprop="dateCreated datePublished" datetime="2023-02-23T13:52:48+00:00">2023-02-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">編集日</span>
+      <time title="修正日：2025-03-16 10:39:27" itemprop="dateModified" datetime="2025-03-16T10:39:27+00:00">2025-03-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/" itemprop="url" rel="index"><span itemprop="name">Ubuntu</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>Ubuntu ServerへPythonとpyenvをインストールして、開発環境を構築したので、その時のメモ。</p>
+<span id="more"></span>
+
+<h1 id="Ubuntuへのpyenvのインストール"><a href="#Ubuntuへのpyenvのインストール" class="headerlink" title="Ubuntuへのpyenvのインストール"></a>Ubuntuへのpyenvのインストール</h1><p>基本的には、pyenvのgithubに記載の手順に沿ってインストールします</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/pyenv/pyenv#installation">(Github) pyenv&#x2F;pyenvインストール方法</a></p>
+<h2 id="pyenvのインストール"><a href="#pyenvのインストール" class="headerlink" title="pyenvのインストール"></a>pyenvのインストール</h2><p>最新のHEADを取得する場合は下記のコマンドを実行。<br>pyenvの特定のリリースをインストールする場合は、PYENV_GIT_TAG環境変数を設定します (例export PYENV_GIT_TAG&#x3D;v2.2.5:)。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> curl https://pyenv.run | bash</span><br></pre></td></tr></table></figure>
+
+<p>pyenv.runは、リポジトリのpyenv-installerにリダイレクトされるので、上記の呼び出しは以下と同じ結果になるようです。(つまりどちらでもよい)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash</span><br></pre></td></tr></table></figure>
+
+<h2 id="pyenvのPATHを設定する"><a href="#pyenvのPATHを設定する" class="headerlink" title="pyenvのPATHを設定する"></a>pyenvのPATHを設定する</h2><p>下記コマンドを実行してPathを通します</p>
+<p>まずは、 ~&#x2F;.bashrc へ下記コマンドで設定追加。<br>個人的な好みですが公式のコマンドに加えてコメントを入れています。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;# set PATH for pyenv&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PYENV_ROOT=&quot;$HOME/.pyenv&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;command -v pyenv &gt;/dev/null || export PATH=&quot;$PYENV_ROOT/bin:$PATH&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;eval &quot;$(pyenv init -)&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>今回使った環境 (Ubuntu Server 22.04) は、<del>&#x2F;.bash_profile がなく、</del>&#x2F;.profileがあるので、下記コマンドを実行しました。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;&#x27;</span> &gt;&gt; ~/.profile</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;# set PATH for pyenv&#x27;</span> &gt;&gt; ~/.profile</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PYENV_ROOT=&quot;$HOME/.pyenv&quot;&#x27;</span> &gt;&gt; ~/.profile</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;command -v pyenv &gt;/dev/null || export PATH=&quot;$PYENV_ROOT/bin:$PATH&quot;&#x27;</span> &gt;&gt; ~/.profile</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;eval &quot;$(pyenv init -)&quot;&#x27;</span> &gt;&gt; ~/.profile</span><br></pre></td></tr></table></figure>
+
+<p>シェルを再起動します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">exec</span> <span class="variable">$SHELL</span></span><br></pre></td></tr></table></figure>
+
+<p>pyenvのバージョンを表示できるようになりました。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv --version</span><br><span class="line">pyenv 2.3.13</span><br></pre></td></tr></table></figure>
+
+
+<p>pyenvのアップデートをしておきます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv update</span><br></pre></td></tr></table></figure>
+
+<h2 id="pythonをバージョン指定してインストール"><a href="#pythonをバージョン指定してインストール" class="headerlink" title="pythonをバージョン指定してインストール"></a>pythonをバージョン指定してインストール</h2><p>下記コマンドを実行してインストール可能なリストを取得します</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv install --list</span><br><span class="line">Available versions:</span><br><span class="line">  2.1.3</span><br><span class="line">  2.2.3</span><br><span class="line">  2.3.7</span><br><span class="line">  (中略)</span><br><span class="line">  3.10.10</span><br><span class="line">  3.11.0</span><br><span class="line">  3.11-dev</span><br><span class="line">  3.11.1</span><br><span class="line">  3.11.2</span><br><span class="line">  3.12.0a5</span><br><span class="line">  3.12-dev</span><br></pre></td></tr></table></figure>
+
+<p>今回は、3.10.10と、3.11.2を使ってみます<br>下記コマンドを実行してそれぞれのバージョンをインストールします。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv install 3.10.4</span><br><span class="line">$ pyenv install 3.11.2</span><br></pre></td></tr></table></figure>
+
+<p>pythonの指定したバージョンをインストールできたか確認します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv versions</span><br><span class="line">* system (<span class="built_in">set</span> by /home/testuser/.pyenv/version)</span><br><span class="line">  3.10.4</span><br><span class="line">  3.11.2</span><br></pre></td></tr></table></figure>
+
+<h2 id="pyenvでpythonをバージョン指定してインストールするときに失敗した場合の対処法"><a href="#pyenvでpythonをバージョン指定してインストールするときに失敗した場合の対処法" class="headerlink" title="pyenvでpythonをバージョン指定してインストールするときに失敗した場合の対処法"></a>pyenvでpythonをバージョン指定してインストールするときに失敗した場合の対処法</h2><p>ここでpyenvでpythonのインストールに失敗し、下記のようなエラーが出ることがあります。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">BUILD FAILED (Ubuntu 22.04 using python-build 20180424)</span><br><span class="line"></span><br><span class="line">Inspect or clean up the working tree at /tmp/python-build.20230223130153.2311</span><br><span class="line">Results logged to /tmp/python-build.20230223130153.2311.log</span><br><span class="line"></span><br><span class="line">Last 10 log lines:</span><br><span class="line">checking for pkg-config... no</span><br><span class="line">checking for --enable-universalsdk... no</span><br><span class="line">checking for --with-universal-archs... no</span><br><span class="line">checking MACHDEP... &quot;linux&quot;</span><br><span class="line">checking for gcc... no</span><br><span class="line">checking for cc... no</span><br><span class="line">checking for cl.exe... no</span><br><span class="line">configure: error: in `/tmp/python-build.20230223130153.2311/Python-3.11.2&#x27;:</span><br><span class="line">configure: error: no acceptable C compiler found in $PATH</span><br><span class="line">See `config.log&#x27; for more details</span><br></pre></td></tr></table></figure>
+
+<p>ビルド環境に必要なツール群をインストールすると解決する場合があります。</p>
+<p>参考: <a target="_blank" rel="noopener" href="https://github.com/pyenv/pyenv/wiki#suggested-build-environment">https://github.com/pyenv/pyenv/wiki#suggested-build-environment</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> apt update; <span class="built_in">sudo</span> apt install build-essential libssl-dev zlib1g-dev \</span><br><span class="line">libbz2-dev libreadline-dev libsqlite3-dev curl \</span><br><span class="line">libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="pythonをバージョン指定して適用"><a href="#pythonをバージョン指定して適用" class="headerlink" title="pythonをバージョン指定して適用"></a>pythonをバージョン指定して適用</h2><p>pythonのバージョンを変更してみます</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv global 3.10.4</span><br></pre></td></tr></table></figure>
+
+<p>変更できたことを確認します</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv versions</span><br><span class="line">  system</span><br><span class="line">* 3.10.4 (<span class="built_in">set</span> by /home/testuser/.pyenv/version)</span><br><span class="line">  3.11.2</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python --version</span><br><span class="line">Python 3.10.4</span><br></pre></td></tr></table></figure>
+
+<p>3.11.2も試してみます</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv global 3.11.2</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pyenv versions</span><br><span class="line">  system</span><br><span class="line">  3.10.4</span><br><span class="line">* 3.11.2 (<span class="built_in">set</span> by /home/testuser/.pyenv/version)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python --version</span><br><span class="line">Python 3.11.2</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Ubuntu/" rel="tag"><i class="fa fa-tag"></i> Ubuntu</a>
+              <a href="/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/" rel="tag"><i class="fa fa-tag"></i> 環境構築</a>
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/07/ubuntu-server-setup/" rel="prev" title="Ubuntu Serverで開発環境を立てた時のメモ">
+                  <i class="fa fa-angle-left"></i> Ubuntu Serverで開発環境を立てた時のメモ
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/02/24/python-virtualenv-switch/" rel="next" title="virtualenv使用して複数の開発環境を切り替えて使えるようにした時のメモ">
+                  virtualenv使用して複数の開発環境を切り替えて使えるようにした時のメモ <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-lemon"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">hiroaki-ma1203</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

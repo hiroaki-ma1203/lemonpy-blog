@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="概要AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。   新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、手間が多そうだったので、EventBridge">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ネストされたAWS SAM アプリケーションのサンプル  その1">
+<meta property="og:url" content="http://lemonpy.net/2025/03/20/aws-sam-nested-sample-1/index.html">
+<meta property="og:site_name" content="Lemonpy.net">
+<meta property="og:description" content="概要AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。   新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、手間が多そうだったので、EventBridge">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="http://lemonpy.net/2025/03/20/aws-sam-nested-sample-1/architecture.drawio.png">
+<meta property="article:published_time" content="2025-03-20T11:31:48.000Z">
+<meta property="article:modified_time" content="2025-03-20T13:19:42.457Z">
+<meta property="article:author" content="hiroaki-ma1203">
+<meta property="article:tag" content="AWS">
+<meta property="article:tag" content="AWS-SAM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lemonpy.net/2025/03/20/aws-sam-nested-sample-1/architecture.drawio.png">
+
+
+<link rel="canonical" href="http://lemonpy.net/2025/03/20/aws-sam-nested-sample-1/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2025/03/20/aws-sam-nested-sample-1/","path":"2025/03/20/aws-sam-nested-sample-1/","title":"ネストされたAWS SAM アプリケーションのサンプル  その1"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ネストされたAWS SAM アプリケーションのサンプル  その1 | Lemonpy.net</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-H628V853SK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="ナビゲーションバーの切り替え" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lemonpy.net</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="検索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>ホーム</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>プロフィール</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>タグ</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>カテゴリ</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>アーカイブ</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>検索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="検索…" spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          見出し
+        </li>
+        <li class="sidebar-nav-overview">
+          概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%9C%E3%81%A3%E3%81%9F%E3%82%82%E3%81%AE"><span class="nav-number">2.</span> <span class="nav-text">作ったもの</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%89"><span class="nav-number">2.1.</span> <span class="nav-text">ソースコード</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E6%A7%8B%E9%80%A0"><span class="nav-number">2.2.</span> <span class="nav-text">プロジェクト構造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3"><span class="nav-number">2.3.</span> <span class="nav-text">アーキテクチャ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A7%8B%E6%88%90%E5%9B%B3"><span class="nav-number">2.4.</span> <span class="nav-text">構成図</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%84%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E9%96%8B%E8%A8%AD"><span class="nav-number">3.</span> <span class="nav-text">各テンプレートの開設</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#template-yaml"><span class="nav-number">3.1.</span> <span class="nav-text">template.yaml</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#S3EventBridgeStack"><span class="nav-number">3.1.1.</span> <span class="nav-text">S3EventBridgeStack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LambdaStack"><span class="nav-number">3.1.2.</span> <span class="nav-text">LambdaStack</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#s3-eventbridge-template-yaml"><span class="nav-number">3.2.</span> <span class="nav-text">s3-eventbridge-template.yaml</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MyS3Bucket"><span class="nav-number">3.2.1.</span> <span class="nav-text">MyS3Bucket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MyEventBus"><span class="nav-number">3.2.2.</span> <span class="nav-text">MyEventBus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForwardS3PutObjectRule"><span class="nav-number">3.2.3.</span> <span class="nav-text">ForwardS3PutObjectRule</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForwardEventRole"><span class="nav-number">3.2.4.</span> <span class="nav-text">ForwardEventRole</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lambda-template-yaml"><span class="nav-number">3.3.</span> <span class="nav-text">lambda-template.yaml</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MyLambdaFunction"><span class="nav-number">3.3.1.</span> <span class="nav-text">MyLambdaFunction</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%81%AE%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">サンプルの使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%8F%90%E6%9D%A1%E4%BB%B6"><span class="nav-number">4.1.</span> <span class="nav-text">前提条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E6%96%B9%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">デプロイ方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8B%95%E4%BD%9C%E7%A2%BA%E8%AA%8D"><span class="nav-number">4.3.</span> <span class="nav-text">動作確認</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA"><span class="nav-number">4.4.</span> <span class="nav-text">カスタマイズ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%92%B0%E5%A2%83%E3%81%AE%E5%89%8A%E9%99%A4"><span class="nav-number">4.5.</span> <span class="nav-text">環境の削除</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="hiroaki-ma1203"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">hiroaki-ma1203</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">ポスト</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">カテゴリ</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">タグ</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hiroaki-ma1203" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hiroaki-ma1203" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2025/03/20/aws-sam-nested-sample-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ネストされたAWS SAM アプリケーションのサンプル  その1 | Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ネストされたAWS SAM アプリケーションのサンプル  その1
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+      
+
+      <time title="作成日：2025-03-20 11:31:48 / 修正日：13:19:42" itemprop="dateCreated datePublished" datetime="2025-03-20T11:31:48+00:00">2025-03-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/AWS/" itemprop="url" rel="index"><span itemprop="name">AWS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。<br>S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。  </p>
+<p>新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、<br><a target="_blank" rel="noopener" href="https://repost.aws/ja/knowledge-center/cloudformation-s3-notification-lambda">手間が多そうだった</a>ので、<br>EventBridge を使用してみることにしました。</p>
+<span id="more"></span>
+
+<h1 id="作ったもの"><a href="#作ったもの" class="headerlink" title="作ったもの"></a>作ったもの</h1><h2 id="ソースコード"><a href="#ソースコード" class="headerlink" title="ソースコード"></a>ソースコード</h2><p>以下のリポジトリで公開しています。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/hiroaki-ma1203/aws-sam-samples/tree/main/nested-sam-app-1">GitHub リポジトリ</a></li>
+</ul>
+<h2 id="プロジェクト構造"><a href="#プロジェクト構造" class="headerlink" title="プロジェクト構造"></a>プロジェクト構造</h2><p>アプリケーションは、次の 3 つの SAM テンプレートで構成されます。</p>
+<ol>
+<li><code>template.yaml</code> : ネストされたスタックをオーケストレーションするメインテンプレート。</li>
+<li><code>s3-eventbridge-template.yaml</code> : S3 バケットと EventBridge のカスタムイベントバスを作成し、<br> default イベントバスからカスタムイベントバスへの転送ルールを定義。</li>
+<li><code>lambda-template.yaml</code> : トリガーされる Lambda 関数を定義。</li>
+</ol>
+<h2 id="アーキテクチャ"><a href="#アーキテクチャ" class="headerlink" title="アーキテクチャ"></a>アーキテクチャ</h2><p>S3, EventBridge, Lambda, および必要な IAM Role となります。</p>
+<ol>
+<li>S3 Bucket を作成します。<ul>
+<li>S3 には、ファイルアップロード時に S3 イベントを Amazon EventBridge へ送信するよう設定します。</li>
+<li>このイベント通知は Default event busへ送信されます。</li>
+</ul>
+</li>
+<li>Custom event busを作成します。<ul>
+<li>EventBridge にルールを設定し、 Default event bus から、Custom event busへイベントを転送するようルール設定します。</li>
+</ul>
+</li>
+<li>Lambda 関数を作成します。<ul>
+<li>Custom event bus にイベントを Lambda 関数へルーティングするようルールを設定します。</li>
+</ul>
+</li>
+</ol>
+<h2 id="構成図"><a href="#構成図" class="headerlink" title="構成図"></a>構成図</h2><img src="/2025/03/20/aws-sam-nested-sample-1/architecture.drawio.png" class="">
+
+<h1 id="各テンプレートの開設"><a href="#各テンプレートの開設" class="headerlink" title="各テンプレートの開設"></a>各テンプレートの開設</h1><h2 id="template-yaml"><a href="#template-yaml" class="headerlink" title="template.yaml"></a>template.yaml</h2><p>ネストされたスタックをオーケストレーションするメインテンプレートです。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">AWSTemplateFormatVersion:</span> <span class="string">&#x27;2010-09-09&#x27;</span></span><br><span class="line"><span class="attr">Transform:</span> <span class="string">AWS::Serverless-2016-10-31</span></span><br><span class="line"><span class="attr">Description:</span> <span class="string">&#x27;Root template that nests S3/EventBridge and Lambda templates&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Resources:</span></span><br><span class="line">  <span class="attr">S3EventBridgeStack:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::CloudFormation::Stack</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">TemplateURL:</span> <span class="string">s3-eventbridge-template.yaml</span></span><br><span class="line">      </span><br><span class="line">  <span class="attr">LambdaStack:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::CloudFormation::Stack</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">TemplateURL:</span> <span class="string">lambda-template.yaml</span></span><br><span class="line">      <span class="attr">Parameters:</span></span><br><span class="line">        <span class="attr">EventBusName:</span> <span class="type">!GetAtt</span> <span class="string">S3EventBridgeStack.Outputs.EventBusName</span></span><br><span class="line">        <span class="attr">S3BucketName:</span> <span class="type">!GetAtt</span> <span class="string">S3EventBridgeStack.Outputs.S3BucketName</span></span><br><span class="line">    <span class="attr">DependsOn:</span> <span class="string">S3EventBridgeStack</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Outputs:</span></span><br><span class="line">  <span class="attr">S3BucketName:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;Name of the created S3 bucket&#x27;</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!GetAtt</span> <span class="string">S3EventBridgeStack.Outputs.S3BucketName</span></span><br><span class="line">  <span class="attr">EventBusName:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;Name of the created EventBridge bus&#x27;</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!GetAtt</span> <span class="string">S3EventBridgeStack.Outputs.EventBusName</span></span><br><span class="line">  <span class="attr">LambdaFunctionArn:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;ARN of the created Lambda function&#x27;</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!GetAtt</span> <span class="string">LambdaStack.Outputs.LambdaFunctionArn</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="S3EventBridgeStack"><a href="#S3EventBridgeStack" class="headerlink" title="S3EventBridgeStack"></a>S3EventBridgeStack</h3><p>このリソースで S3 と EventBridge の Custom event bus を作成します。</p>
+<h3 id="LambdaStack"><a href="#LambdaStack" class="headerlink" title="LambdaStack"></a>LambdaStack</h3><p>このリソースで Lambda 関数を作成します。<br>Custom event bus の名前をパラメータとして渡すのは、トリガーを設定する必要があるためです。<br>S3 バケット名をパラメータとして渡すのは、Lambda 関数にバケットへのアクセス権を設定するためです。</p>
+<h2 id="s3-eventbridge-template-yaml"><a href="#s3-eventbridge-template-yaml" class="headerlink" title="s3-eventbridge-template.yaml"></a>s3-eventbridge-template.yaml</h2><p>S3 bucket と Custom event bus および、 Default event bus からの転送するルールを設定するテンプレートです。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">AWSTemplateFormatVersion:</span> <span class="string">&#x27;2010-09-09&#x27;</span></span><br><span class="line"><span class="attr">Description:</span> <span class="string">&#x27;Template to create S3 bucket and EventBridge bus&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Resources:</span></span><br><span class="line">  <span class="attr">MyS3Bucket:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&#x27;AWS::S3::Bucket&#x27;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">BucketName:</span> <span class="type">!Sub</span> <span class="string">&#x27;nested-sam-app-1-s3-$&#123;AWS::AccountId&#125;-$&#123;AWS::Region&#125;&#x27;</span></span><br><span class="line">      <span class="attr">NotificationConfiguration:</span></span><br><span class="line">        <span class="attr">EventBridgeConfiguration:</span></span><br><span class="line">          <span class="attr">EventBridgeEnabled:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">MyEventBus:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&#x27;AWS::Events::EventBus&#x27;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">Name:</span> <span class="string">&#x27;nested-sam-app-1-event-bus&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Add new rule to default event bus that forward PutObject events from default bus to custom bus</span></span><br><span class="line">  <span class="attr">ForwardS3PutObjectRule:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&#x27;AWS::Events::Rule&#x27;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">EventBusName:</span> <span class="string">&#x27;default&#x27;</span>  <span class="comment"># This specifies the default event bus</span></span><br><span class="line">      <span class="attr">EventPattern:</span></span><br><span class="line">        <span class="attr">source:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">aws.s3</span></span><br><span class="line">        <span class="attr">detail-type:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">&#x27;Object Created&#x27;</span></span><br><span class="line">        <span class="attr">detail:</span></span><br><span class="line">          <span class="attr">bucket:</span></span><br><span class="line">            <span class="attr">name:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="type">!Ref</span> <span class="string">MyS3Bucket</span></span><br><span class="line">      <span class="attr">State:</span> <span class="string">&#x27;ENABLED&#x27;</span></span><br><span class="line">      <span class="attr">Targets:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">Arn:</span> <span class="type">!GetAtt</span> <span class="string">MyEventBus.Arn</span></span><br><span class="line">          <span class="attr">Id:</span> <span class="string">&quot;ForwardToMyS3EventBus&quot;</span></span><br><span class="line">          <span class="attr">RoleArn:</span> <span class="type">!GetAtt</span> <span class="string">ForwardEventRole.Arn</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># IAM role to allow EventBridge to put events on the custom bus</span></span><br><span class="line">  <span class="attr">ForwardEventRole:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">&#x27;AWS::IAM::Role&#x27;</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">AssumeRolePolicyDocument:</span></span><br><span class="line">        <span class="attr">Version:</span> <span class="string">&#x27;2012-10-17&#x27;</span></span><br><span class="line">        <span class="attr">Statement:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">Effect:</span> <span class="string">Allow</span></span><br><span class="line">            <span class="attr">Principal:</span></span><br><span class="line">              <span class="attr">Service:</span> <span class="string">events.amazonaws.com</span></span><br><span class="line">            <span class="attr">Action:</span> <span class="string">&#x27;sts:AssumeRole&#x27;</span></span><br><span class="line">      <span class="attr">Policies:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">PolicyName:</span> <span class="string">&#x27;nested-sam-app-1-allow-put-event-to-bus&#x27;</span></span><br><span class="line">          <span class="attr">PolicyDocument:</span></span><br><span class="line">            <span class="attr">Version:</span> <span class="string">&#x27;2012-10-17&#x27;</span></span><br><span class="line">            <span class="attr">Statement:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="attr">Effect:</span> <span class="string">Allow</span></span><br><span class="line">                <span class="attr">Action:</span> <span class="string">&#x27;events:PutEvents&#x27;</span></span><br><span class="line">                <span class="attr">Resource:</span> <span class="type">!GetAtt</span> <span class="string">MyEventBus.Arn</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Outputs:</span></span><br><span class="line">  <span class="attr">S3BucketName:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;Name of the created S3 bucket&#x27;</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!Ref</span> <span class="string">MyS3Bucket</span></span><br><span class="line">  <span class="attr">EventBusName:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;Name of the created EventBridge bus&#x27;</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!Ref</span> <span class="string">MyEventBus</span></span><br><span class="line">  <span class="attr">EventBusArn:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;ARN of the created EventBridge bus&#x27;</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!GetAtt</span> <span class="string">MyEventBus.Arn</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="MyS3Bucket"><a href="#MyS3Bucket" class="headerlink" title="MyS3Bucket"></a>MyS3Bucket</h3><p>S3 から EventBridge へのイベント通知を有効にするため、以下のパラメータを設定します。<br><code>EventBridgeEnabled: true</code></p>
+<p>これにより、この S3 バケットのイベントが Default event bus へ通知されます。</p>
+<h3 id="MyEventBus"><a href="#MyEventBus" class="headerlink" title="MyEventBus"></a>MyEventBus</h3><p>Custom event bus を作成します。</p>
+<h3 id="ForwardS3PutObjectRule"><a href="#ForwardS3PutObjectRule" class="headerlink" title="ForwardS3PutObjectRule"></a>ForwardS3PutObjectRule</h3><p>Default event bus から Custom event bus へ、イベント通知を転送するルールを設定します。<br><code>EventPattern</code> の <code>source</code> で S3 のイベント通知に限定します。<br><code>detail-type</code> で <code>Object Created</code> に絞り、<code>detail</code> で今回作成したバケットのイベントのみ転送する設定をします。</p>
+<h3 id="ForwardEventRole"><a href="#ForwardEventRole" class="headerlink" title="ForwardEventRole"></a>ForwardEventRole</h3><p>Default event bus から Custom event bus へのアクセス許可を設定します。</p>
+<h2 id="lambda-template-yaml"><a href="#lambda-template-yaml" class="headerlink" title="lambda-template.yaml"></a>lambda-template.yaml</h2><p>Lambda 関数と Custom event bus へトリガーを設定するテンプレートです。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">AWSTemplateFormatVersion:</span> <span class="string">&#x27;2010-09-09&#x27;</span></span><br><span class="line"><span class="attr">Transform:</span> <span class="string">AWS::Serverless-2016-10-31</span></span><br><span class="line"><span class="attr">Description:</span> <span class="string">&#x27;Template to create Lambda function triggered by S3 events via EventBridge&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Parameters:</span></span><br><span class="line">  <span class="attr">EventBusName:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">String</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;Name of the EventBridge bus&#x27;</span></span><br><span class="line">  <span class="attr">S3BucketName:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">String</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;Name of the S3 bucket&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Resources:</span></span><br><span class="line">  <span class="attr">MyLambdaFunction:</span></span><br><span class="line">    <span class="attr">Type:</span> <span class="string">AWS::Serverless::Function</span></span><br><span class="line">    <span class="attr">Properties:</span></span><br><span class="line">      <span class="attr">FunctionName:</span> <span class="string">&#x27;nested-sam-app-1-function&#x27;</span></span><br><span class="line">      <span class="attr">CodeUri:</span> <span class="string">./src/</span></span><br><span class="line">      <span class="attr">Handler:</span> <span class="string">app.lambda_handler</span></span><br><span class="line">      <span class="attr">Runtime:</span> <span class="string">python3.11</span></span><br><span class="line">      <span class="attr">Policies:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">S3ReadPolicy:</span></span><br><span class="line">            <span class="attr">BucketName:</span> <span class="type">!Ref</span> <span class="string">S3BucketName</span></span><br><span class="line">      <span class="attr">Events:</span></span><br><span class="line">        <span class="attr">S3ObjectCreated:</span></span><br><span class="line">          <span class="attr">Type:</span> <span class="string">EventBridgeRule</span></span><br><span class="line">          <span class="attr">Properties:</span></span><br><span class="line">            <span class="attr">EventBusName:</span> <span class="type">!Ref</span> <span class="string">EventBusName</span></span><br><span class="line">            <span class="attr">Pattern:</span></span><br><span class="line">              <span class="attr">source:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">aws.s3</span></span><br><span class="line">              <span class="attr">detail-type:</span></span><br><span class="line">                <span class="bullet">-</span> <span class="string">&#x27;Object Created&#x27;</span></span><br><span class="line">              <span class="attr">detail:</span></span><br><span class="line">                <span class="attr">bucket:</span></span><br><span class="line">                  <span class="attr">name:</span></span><br><span class="line">                    <span class="bullet">-</span> <span class="type">!Ref</span> <span class="string">S3BucketName</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Outputs:</span></span><br><span class="line">  <span class="attr">LambdaFunctionArn:</span></span><br><span class="line">    <span class="attr">Description:</span> <span class="string">&#x27;ARN of the created Lambda function&#x27;</span></span><br><span class="line">    <span class="attr">Value:</span> <span class="type">!GetAtt</span> <span class="string">MyLambdaFunction.Arn</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="MyLambdaFunction"><a href="#MyLambdaFunction" class="headerlink" title="MyLambdaFunction"></a>MyLambdaFunction</h3><p>Lanbda 関数を作成します。<br><code>Events</code> でトリガーを今回作成した Custom event bus からの通知に設定しています。</p>
+<h1 id="サンプルの使用方法"><a href="#サンプルの使用方法" class="headerlink" title="サンプルの使用方法"></a>サンプルの使用方法</h1><h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><p>このサンプルを実行するには、以下の権限およびツールが必要です。</p>
+<ul>
+<li>適切な権限を持つ AWS アカウント</li>
+<li>AWS CLI</li>
+<li>AWS SAM CLI</li>
+</ul>
+<h2 id="デプロイ方法"><a href="#デプロイ方法" class="headerlink" title="デプロイ方法"></a>デプロイ方法</h2><p>このアプリケーションをデプロイする手順は以下のようになります。</p>
+<ol>
+<li><p>このリポジトリをクローンします。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/hiroaki-ma1203/aws-sam-samples.git</span><br><span class="line"><span class="built_in">cd</span> aws-sam-samples/nested-sam-app-1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>SAM アプリケーションをビルドします。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sam build</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>SAM アプリケーションをデプロイします。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sam deploy --guided</span><br></pre></td></tr></table></figure>
+
+<p>指示に従ってデプロイメント構成を設定します。</p>
+</li>
+</ol>
+<h2 id="動作確認"><a href="#動作確認" class="headerlink" title="動作確認"></a>動作確認</h2><ul>
+<li>デプロイ後、作成された S3 バケットにファイルをアップロードしてください。</li>
+<li>発生した S3 イベントは、EventBridge を介して Lambda 関数をトリガーします。</li>
+<li>AWS コンソールまたは CloudWatch Logs を通じて Lambda 関数の実行結果を確認してください。</li>
+</ul>
+<h2 id="カスタマイズ"><a href="#カスタマイズ" class="headerlink" title="カスタマイズ"></a>カスタマイズ</h2><p>必要に応じて、テンプレートや Lambda 関数の実装を変更してください。</p>
+<ul>
+<li><code>template.yaml</code> : ネストされたスタックを追加や変更する場合は、メインのテンプレートを変更。</li>
+<li><code>s3-eventbridge-template.yaml</code> : S3 バケット設定や EventBridge ルールを変更（例: ファイル削除時にもイベント通知するなど）。</li>
+<li><code>lambda-template.yaml</code> : Lambda 関数のランタイムや構成を変更。</li>
+<li><code>src/app.py</code> : Lambda 関数の実装を変更。</li>
+</ul>
+<h2 id="環境の削除"><a href="#環境の削除" class="headerlink" title="環境の削除"></a>環境の削除</h2><p>このアプリケーションによって作成されたすべてのリソースを削除するには、以下の操作を行ってください。</p>
+<ol>
+<li><p>S3 バケット内のファイルを削除します。</p>
+ <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">aws cloudformation describe-stacks \</span><br><span class="line">    --stack-name nested-sam-app-1 --query <span class="string">&quot;Stacks[0].Outputs[?OutputKey==&#x27;S3BucketName&#x27;].OutputValue&quot;</span> \</span><br><span class="line">    --output text \</span><br><span class="line">    | xargs -I &#123;&#125; aws s3 <span class="built_in">rm</span> s3://&#123;&#125; --recursive</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>スタックを削除します。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sam delete</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AWS/" rel="tag"><i class="fa fa-tag"></i> AWS</a>
+              <a href="/tags/AWS-SAM/" rel="tag"><i class="fa fa-tag"></i> AWS-SAM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/03/16/ubuntu-cockpit-vm-setup/" rel="prev" title="Ubuntu Serverインストールから KVM/QEMU + Cockpit での仮想環境構築までの道のり">
+                  <i class="fa fa-angle-left"></i> Ubuntu Serverインストールから KVM/QEMU + Cockpit での仮想環境構築までの道のり
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-lemon"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">hiroaki-ma1203</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="概要Ubuntu Server 24.04.01 (minimum)へCockpitをインストールして仮想環境を構築したので、備忘録としてその時のメモ。 以前はWindows10を入れてHyper-vで仮想環境を立てていたのですが、データ用のHDDが壊れて使えなくなりました。仕方がないのでリセットするのですが、Windows10はサポート終了するためLinux系OSに変更しようと思い、普段使ってい">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu Serverインストールから KVM&#x2F;QEMU + Cockpit での仮想環境構築までの道のり">
+<meta property="og:url" content="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/index.html">
+<meta property="og:site_name" content="Lemonpy.net">
+<meta property="og:description" content="概要Ubuntu Server 24.04.01 (minimum)へCockpitをインストールして仮想環境を構築したので、備忘録としてその時のメモ。 以前はWindows10を入れてHyper-vで仮想環境を立てていたのですが、データ用のHDDが壊れて使えなくなりました。仕方がないのでリセットするのですが、Windows10はサポート終了するためLinux系OSに変更しようと思い、普段使ってい">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-001.png">
+<meta property="og:image" content="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-002.png">
+<meta property="og:image" content="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-003.png">
+<meta property="og:image" content="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-004.png">
+<meta property="og:image" content="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-005.png">
+<meta property="og:image" content="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-006.png">
+<meta property="article:published_time" content="2025-03-16T09:50:06.000Z">
+<meta property="article:modified_time" content="2025-03-16T10:39:27.740Z">
+<meta property="article:author" content="hiroaki-ma1203">
+<meta property="article:tag" content="Ubuntu">
+<meta property="article:tag" content="環境構築">
+<meta property="article:tag" content="Cockpit">
+<meta property="article:tag" content="KVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-001.png">
+
+
+<link rel="canonical" href="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/","path":"2025/03/16/ubuntu-cockpit-vm-setup/","title":"Ubuntu Serverインストールから KVM/QEMU + Cockpit での仮想環境構築までの道のり"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Ubuntu Serverインストールから KVM/QEMU + Cockpit での仮想環境構築までの道のり | Lemonpy.net</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-H628V853SK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="ナビゲーションバーの切り替え" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lemonpy.net</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="検索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>ホーム</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>プロフィール</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>タグ</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>カテゴリ</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>アーカイブ</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>検索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="検索…" spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          見出し
+        </li>
+        <li class="sidebar-nav-overview">
+          概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E3%81%AB%E3%81%97%E3%81%9F%E3%82%B5%E3%82%A4%E3%83%88"><span class="nav-number">2.</span> <span class="nav-text">参考にしたサイト</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%83%9B%E3%82%B9%E3%83%88PC%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6"><span class="nav-number">3.</span> <span class="nav-text">ホストPCについて</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%B9%E3%83%9A%E3%83%83%E3%82%AF"><span class="nav-number">3.1.</span> <span class="nav-text">スペック</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OS"><span class="nav-number">3.2.</span> <span class="nav-text">OS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu-Server-24-04-01-%E3%82%92%E3%83%9B%E3%82%B9%E3%83%88PC%E3%81%B8%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">3.3.</span> <span class="nav-text">Ubuntu Server 24.04.01 をホストPCへインストール</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%83%9C%E3%83%AA%E3%83%A5%E3%83%BC%E3%83%A0%E3%82%92%E6%8B%A1%E5%BC%B5"><span class="nav-number">3.4.</span> <span class="nav-text">ボリュームを拡張</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%8B%E9%A0%86"><span class="nav-number">4.</span> <span class="nav-text">手順</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%89%8D%E6%BA%96%E5%82%99"><span class="nav-number">4.1.</span> <span class="nav-text">事前準備</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%82%92%E6%9C%80%E6%96%B0%E3%81%AE%E7%8A%B6%E6%85%8B%E3%81%AB%E6%9B%B4%E6%96%B0"><span class="nav-number">4.1.1.</span> <span class="nav-text">システムを最新の状態に更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vim%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.1.2.</span> <span class="nav-text">vimをインストール</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVM-QEMU-Cockpit-cockpit-machines-%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.2.</span> <span class="nav-text">KVM&#x2F;QEMU + Cockpit + cockpit-machines をインストール</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#KVM-QEMU-%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.2.1.</span> <span class="nav-text">KVM&#x2F;QEMU のインストール</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#libvirt-%E3%81%AE%E8%B5%B7%E5%8B%95%E3%81%A8%E8%87%AA%E5%8B%95%E8%B5%B7%E5%8B%95%E8%A8%AD%E5%AE%9A"><span class="nav-number">4.2.2.</span> <span class="nav-text">libvirt の起動と自動起動設定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KVM-%E3%81%AE%E6%9C%89%E5%8A%B9%E6%80%A7%E3%82%92%E7%A2%BA%E8%AA%8D"><span class="nav-number">4.2.3.</span> <span class="nav-text">KVM の有効性を確認</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cockpit-%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%A8%E8%87%AA%E5%8B%95%E8%B5%B7%E5%8B%95%E8%A8%AD%E5%AE%9A"><span class="nav-number">4.2.4.</span> <span class="nav-text">Cockpit のインストールと自動起動設定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cockpit-%E3%81%AE-WebUI-%E3%81%AB%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%97%E3%81%A6%E7%A2%BA%E8%AA%8D"><span class="nav-number">4.2.5.</span> <span class="nav-text">Cockpit の WebUI にアクセスして確認</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%AE%E8%A8%AD%E5%AE%9A"><span class="nav-number">4.3.</span> <span class="nav-text">仮想ネットワークの設定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8F%BE%E7%8A%B6%E7%A2%BA%E8%AA%8D"><span class="nav-number">4.3.1.</span> <span class="nav-text">現状確認</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E7%AE%A1%E7%90%86%E3%82%92NetworkManager%E3%81%AB%E5%A4%89%E6%9B%B4"><span class="nav-number">4.3.2.</span> <span class="nav-text">ネットワーク管理をNetworkManagerに変更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%83%95%E3%82%A7%E3%83%BC%E3%82%B9%E3%82%92NetworkManager%E7%AE%A1%E7%90%86%E3%81%AB%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B"><span class="nav-number">4.3.3.</span> <span class="nav-text">ネットワークインターフェースをNetworkManager管理に変更する</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cockpit%E3%81%8B%E3%82%89%E4%BB%AE%E6%83%B3%E3%83%96%E3%83%AA%E3%83%83%E3%82%B8%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B"><span class="nav-number">4.3.4.</span> <span class="nav-text">Cockpitから仮想ブリッジを設定する</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%82%92%E4%BD%9C%E6%88%90%E3%81%97OS%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.4.</span> <span class="nav-text">仮想マシンを作成しOSをインストール</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OS%E3%81%AEISO%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8%E3%82%92%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89"><span class="nav-number">4.4.1.</span> <span class="nav-text">OSのISOイメージをダウンロード</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cockpit%E3%81%AEWebUI%E3%81%8B%E3%82%89%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%82%92%E4%BD%9C%E6%88%90"><span class="nav-number">4.4.2.</span> <span class="nav-text">CockpitのWebUIから仮想マシンを作成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%AE%E3%82%B9%E3%83%8A%E3%83%83%E3%83%97%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%E3%82%92%E4%BD%9C%E6%88%90"><span class="nav-number">4.4.3.</span> <span class="nav-text">仮想マシンのスナップショットを作成</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%81%8A%E3%82%8F%E3%82%8A%E3%81%AB"><span class="nav-number">5.</span> <span class="nav-text">おわりに</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="hiroaki-ma1203"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">hiroaki-ma1203</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">ポスト</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">カテゴリ</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">タグ</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hiroaki-ma1203" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hiroaki-ma1203" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2025/03/16/ubuntu-cockpit-vm-setup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Ubuntu Serverインストールから KVM/QEMU + Cockpit での仮想環境構築までの道のり | Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ubuntu Serverインストールから KVM/QEMU + Cockpit での仮想環境構築までの道のり
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+      
+
+      <time title="作成日：2025-03-16 09:50:06 / 修正日：10:39:27" itemprop="dateCreated datePublished" datetime="2025-03-16T09:50:06+00:00">2025-03-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/" itemprop="url" rel="index"><span itemprop="name">Ubuntu</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/KVM/%E4%BB%AE%E6%83%B3%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">仮想環境</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>Ubuntu Server 24.04.01 (minimum)へCockpitをインストールして仮想環境を構築したので、備忘録としてその時のメモ。</p>
+<p>以前はWindows10を入れてHyper-vで仮想環境を立てていたのですが、データ用のHDDが壊れて使えなくなりました。<br>仕方がないのでリセットするのですが、Windows10はサポート終了するためLinux系OSに変更しようと思い、<br>普段使っているUbuntuを入れることにしました。</p>
+<span id="more"></span>
+
+<h1 id="参考にしたサイト"><a href="#参考にしたサイト" class="headerlink" title="参考にしたサイト"></a>参考にしたサイト</h1><p>参考にしたサイトは下記です。手順はほぼ同一ですが追加でコマンド実行した部分がありました。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://qiita.com/ku_suke/items/269dfecec398187aed77">Ubuntuにkvm&#x2F;QEMUをいれてCockpitで快適に仮想マシンサーバを運用してみる</a></li>
+</ul>
+<p>上記サイトからリンクされている以下のサイトも参考にしました。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.linuxtechi.com/how-to-install-kvm-on-ubuntu-22-04/">How to Install KVM on Ubuntu 22.04 Step-by-Step</a></li>
+</ul>
+<h1 id="ホストPCについて"><a href="#ホストPCについて" class="headerlink" title="ホストPCについて"></a>ホストPCについて</h1><h2 id="スペック"><a href="#スペック" class="headerlink" title="スペック"></a>スペック</h2><p>かなり古いPCですが、現役で使っています。</p>
+<ul>
+<li>筐体: Shuttle DS61 V1.1</li>
+<li>CPU: Intel Core i5-3470S</li>
+<li>メモリー: 32GB</li>
+<li>ディスク: 256GB</li>
+</ul>
+<h2 id="OS"><a href="#OS" class="headerlink" title="OS"></a>OS</h2><p>Ubuntuを普段使っているので今回も採用しました。</p>
+<ul>
+<li>OS: Ubuntu Server 24.04.01</li>
+</ul>
+<h2 id="Ubuntu-Server-24-04-01-をホストPCへインストール"><a href="#Ubuntu-Server-24-04-01-をホストPCへインストール" class="headerlink" title="Ubuntu Server 24.04.01 をホストPCへインストール"></a>Ubuntu Server 24.04.01 をホストPCへインストール</h2><p><a target="_blank" rel="noopener" href="https://jp.ubuntu.com/download">Ubuntu 公式</a> からISOイメージをダウンロードし、<br><a target="_blank" rel="noopener" href="https://rufus.ie/ja/">Rufus</a>などを使用して起動可能なUSBメモリーを作成し、ホストPCへインストールします。</p>
+<p>インストールの途中で minimum を選択してインストールしました。<br>この記事の説明はこの状態から開始します。</p>
+<h2 id="ボリュームを拡張"><a href="#ボリュームを拡張" class="headerlink" title="ボリュームを拡張"></a>ボリュームを拡張</h2><p>先の紹介したサイトでも記載されていますが、論理ボリュームはインストーラーのデフォルトだと100GBになっていたので最大まで拡張しました。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 確認</span></span><br><span class="line"><span class="built_in">df</span> -h</span><br><span class="line">lsblk</span><br><span class="line"><span class="comment"># 拡張</span></span><br><span class="line"><span class="built_in">sudo</span> lvextend -l +100%FREE /dev/mapper/ubuntu--vg-ubuntu--lv</span><br><span class="line"><span class="built_in">sudo</span> resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv</span><br><span class="line"><span class="comment"># 確認</span></span><br><span class="line"><span class="built_in">df</span> -h</span><br><span class="line">lsblk</span><br></pre></td></tr></table></figure>
+
+<h1 id="手順"><a href="#手順" class="headerlink" title="手順"></a>手順</h1><h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><h3 id="システムを最新の状態に更新"><a href="#システムを最新の状態に更新" class="headerlink" title="システムを最新の状態に更新"></a>システムを最新の状態に更新</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt upgrade -y</span><br></pre></td></tr></table></figure>
+
+<h3 id="vimをインストール"><a href="#vimをインストール" class="headerlink" title="vimをインストール"></a>vimをインストール</h3><p>minimum でインストールしたら入ってなかったので入れておきます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install -y vim</span><br></pre></td></tr></table></figure>
+
+<h2 id="KVM-QEMU-Cockpit-cockpit-machines-をインストール"><a href="#KVM-QEMU-Cockpit-cockpit-machines-をインストール" class="headerlink" title="KVM&#x2F;QEMU + Cockpit + cockpit-machines をインストール"></a>KVM&#x2F;QEMU + Cockpit + cockpit-machines をインストール</h2><h3 id="KVM-QEMU-のインストール"><a href="#KVM-QEMU-のインストール" class="headerlink" title="KVM&#x2F;QEMU のインストール"></a>KVM&#x2F;QEMU のインストール</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils</span><br></pre></td></tr></table></figure>
+
+<h3 id="libvirt-の起動と自動起動設定"><a href="#libvirt-の起動と自動起動設定" class="headerlink" title="libvirt の起動と自動起動設定"></a>libvirt の起動と自動起動設定</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> --now libvirtd</span><br></pre></td></tr></table></figure>
+
+<p>libvirtdが起動してない場合はstartします。(自分の環境では勝手に起動してました)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl start libvirtd</span><br></pre></td></tr></table></figure>
+
+<h3 id="KVM-の有効性を確認"><a href="#KVM-の有効性を確認" class="headerlink" title="KVM の有効性を確認"></a>KVM の有効性を確認</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> kvm-ok</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><figcaption><span>acceleration can be used``` と表示されれば問題なし。</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### kvmグループにユーザを追加</span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">sudo usermod -aG kvm $USER</span><br><span class="line">sudo usermod -aG libvirt $USER</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cockpit-のインストールと自動起動設定"><a href="#Cockpit-のインストールと自動起動設定" class="headerlink" title="Cockpit のインストールと自動起動設定"></a>Cockpit のインストールと自動起動設定</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install -y cockpit cockpit-machines</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> --now cockpit</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cockpit-の-WebUI-にアクセスして確認"><a href="#Cockpit-の-WebUI-にアクセスして確認" class="headerlink" title="Cockpit の WebUI にアクセスして確認"></a>Cockpit の WebUI にアクセスして確認</h3><p>ここまでで Cockpit が起動しているはずなので確認します。</p>
+<p>ブラウザで以下の URL にアクセスしてログイン：<br><code>https://&lt;UbuntuサーバーのIP&gt;:9090</code></p>
+<h2 id="仮想ネットワークの設定"><a href="#仮想ネットワークの設定" class="headerlink" title="仮想ネットワークの設定"></a>仮想ネットワークの設定</h2><p>ネットワーク管理をNetworkManagerに変更します。<br>※netplanとどちらを使うのが良いのか理解できていませんが、うまく動いたほうを選択しました。</p>
+<h3 id="現状確認"><a href="#現状確認" class="headerlink" title="現状確認"></a>現状確認</h3><p>環境によって変わると思いますが、Shuttle DS61 V1.1はNICが2個あるので、</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">```bash</span><br><span class="line">nmcli device</span><br></pre></td></tr></table></figure>
+
+<p>以下のように表示されます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DEVICE  TYPE      STATE      CONNECTION </span><br><span class="line">virbr0  bridge    unmanaged  --         </span><br><span class="line">enp3s0  ethernet  unmanaged  --         </span><br><span class="line">enp5s0  ethernet  unmanaged  --         </span><br><span class="line">lo      loopback  unmanaged  --  </span><br></pre></td></tr></table></figure>
+
+<h3 id="ネットワーク管理をNetworkManagerに変更"><a href="#ネットワーク管理をNetworkManagerに変更" class="headerlink" title="ネットワーク管理をNetworkManagerに変更"></a>ネットワーク管理をNetworkManagerに変更</h3><p>変更するファイルは環境によって変わるのかもしれませんが、以下のファイルを変更しました。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vi /etc/netplan/50-cloud-init.yaml</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">network:</span><br><span class="line"><span class="comment">#    ethernets:</span></span><br><span class="line"><span class="comment">#        enp3s0:</span></span><br><span class="line"><span class="comment">#            dhcp4: true</span></span><br><span class="line">  renderer: NetworkManager</span><br><span class="line">  version: 2</span><br></pre></td></tr></table></figure>
+
+<h3 id="ネットワークインターフェースをNetworkManager管理に変更する"><a href="#ネットワークインターフェースをNetworkManager管理に変更する" class="headerlink" title="ネットワークインターフェースをNetworkManager管理に変更する"></a>ネットワークインターフェースをNetworkManager管理に変更する</h3><p>NetworkManagerが <code>/etc/network/interfaces</code> で設定されたネットワークインターフェースを<br>管理する設定になっていることを確認します。<br>managed&#x3D;trueならそのまま、falseになっている場合はtrueに変更します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/NetworkManager/NetworkManager.conf</span><br></pre></td></tr></table></figure>
+
+<p>以下のように表示されます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">plugins=ifupdown,keyfile</span><br><span class="line"></span><br><span class="line">[ifupdown]</span><br><span class="line">managed=<span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[device]</span><br><span class="line">wifi.scan-rand-mac-address=no</span><br></pre></td></tr></table></figure>
+
+<p>私の環境では<code>false</code>になっていたので変更しました。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> sed -i <span class="string">&#x27;s/managed=false/managed=true/&#x27;</span> /etc/NetworkManager/NetworkManager.conf</span><br></pre></td></tr></table></figure>
+
+<p>再度確認します。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/NetworkManager/NetworkManager.conf</span><br></pre></td></tr></table></figure>
+
+<p>変更されました</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[main]</span><br><span class="line">plugins=ifupdown,keyfile</span><br><span class="line"></span><br><span class="line">[ifupdown]</span><br><span class="line">managed=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">[device]</span><br><span class="line">wifi.scan-rand-mac-address=no</span><br></pre></td></tr></table></figure>
+
+<p>設定変更を反映します</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> netplan apply</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart NetworkManager</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> --now cockpit</span><br></pre></td></tr></table></figure>
+
+<p>設定が反映されたか確認します</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmcli device</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">```bash</span><br><span class="line">DEVICE  TYPE      STATE                   CONNECTION         </span><br><span class="line">enp3s0  ethernet  connected               Wired connection 1 </span><br><span class="line">lo      loopback  connected (externally)  lo                 </span><br><span class="line">virbr0  bridge    connected (externally)  virbr0             </span><br><span class="line">enp5s0  ethernet  unavailable             --       </span><br></pre></td></tr></table></figure>
+
+<p>うまく反映されない場合はOSを再起動すると反映されるかもしれません。<br>※私の環境の場合はOSを再起動しないと反映されませんでした、なぜなのかよくわかりません。</p>
+<h3 id="Cockpitから仮想ブリッジを設定する"><a href="#Cockpitから仮想ブリッジを設定する" class="headerlink" title="Cockpitから仮想ブリッジを設定する"></a>Cockpitから仮想ブリッジを設定する</h3><p>※この作業は既存のネットワークからbridgeネットワークに切り替わるため、DHCP環境ではIPアドレスが変わりますのでご注意ください。</p>
+<p>CockpitのWebUIへログインし、ネットワーキングメニュー画面のインターフェースから<code>ブリッジの追加</code>ボタンを選択します。</p>
+<img src="/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-001.png" class="">
+
+<p>今回使用する<code>enp3s0</code>を選択します。</p>
+<img src="/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-002.png" class="">
+
+<p>そして<code>追加</code>をするとネットワークが切り替わりますので、IPアドレスを確認して再度Cockpitの画面を開きなおします。</p>
+<img src="/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-003.png" class="">
+
+<p>変更後のIPアドレスを確認して再度Cockpitへログインすると<code>br0</code>というインターフェースが追加されました。<br>仮想マシンは、この<code>br0</code>を使用してネットワークへ接続することになります。</p>
+<h2 id="仮想マシンを作成しOSをインストール"><a href="#仮想マシンを作成しOSをインストール" class="headerlink" title="仮想マシンを作成しOSをインストール"></a>仮想マシンを作成しOSをインストール</h2><p>仮想マシンを作成していきます。</p>
+<h3 id="OSのISOイメージをダウンロード"><a href="#OSのISOイメージをダウンロード" class="headerlink" title="OSのISOイメージをダウンロード"></a>OSのISOイメージをダウンロード</h3><p>仮想マシン用のインストールに使用するISOイメージを適当な場所に保存します。<br>今回は Ubuntu 22.04.01 Server をインストールしてみます。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-live-server-amd64.iso</span><br><span class="line"><span class="built_in">cp</span> ubuntu-24.04.1-live-server-amd64.iso /tmp/</span><br></pre></td></tr></table></figure>
+
+<h3 id="CockpitのWebUIから仮想マシンを作成"><a href="#CockpitのWebUIから仮想マシンを作成" class="headerlink" title="CockpitのWebUIから仮想マシンを作成"></a>CockpitのWebUIから仮想マシンを作成</h3><p>以下の手順で仮想マシンを作成します</p>
+<ol>
+<li>Cockpit にログイン (https:&#x2F;&#x2F;&lt;UbuntuサーバーのIP&gt;:9090)</li>
+<li><code>仮想マシン</code>メニューを開く</li>
+<li><code>仮想マシンの作成</code>ボタンをクリック</li>
+<li><code>接続</code>は<code>System</code>を選択</li>
+<li>VMの名前、メモリ、CPU、ストレージを設定</li>
+<li>インストールメディアとして <code>ubuntu-22.04-live-server-amd64.iso</code> を選択</li>
+<li><code>作成して編集する</code>ボタンをクリック</li>
+</ol>
+<p>仮想マシンが作成されました</p>
+<img src="/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-004.png" class="">
+
+<p>仮想マシンの名前部分をクリックすると各仮想マシンの画面に遷移しますので、<br>ネットワークインターフェースを確認し、<code>br0</code>になっていない場合は変更してください。</p>
+<p>仮想マシンを起動すると、画面の右側の<code>コンソール</code>に画面が表示されるので、画面上でOSのインストールを進めます。</p>
+<img src="/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-005.png" class="">
+
+<h3 id="仮想マシンのスナップショットを作成"><a href="#仮想マシンのスナップショットを作成" class="headerlink" title="仮想マシンのスナップショットを作成"></a>仮想マシンのスナップショットを作成</h3><p>仮想マシンの画面の下のほうにある<code>スナップショット</code>から、<code>スナップショットの作成</code>をクリックして作成できます。</p>
+<img src="/2025/03/16/ubuntu-cockpit-vm-setup/ubuntu-cockpit-vm-setup-006.png" class="">
+
+<h1 id="おわりに"><a href="#おわりに" class="headerlink" title="おわりに"></a>おわりに</h1><p>KVM&#x2F;QEMU と Cockpit を使用して仮想マシンを作成できました。<br>netplanで設定すると仮想マシンがネットワークに接続できなかったり、<br>仮想マシンを作成するときに<code>System</code>ではなく<code>User session</code>を選択すると、<br>ネットワークに<code>br0</code>を選択できなかったりなど、色々と模索しながらでしたが、<br>なんとか仮想環境を復旧することができました。</p>
+<p>以前の環境は突然壊れてしまったので、今後は、定期的なスナップショットの作成やNAS等への外部バックアップやリストアなどにも取り組んでいきたいと考えています。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Ubuntu/" rel="tag"><i class="fa fa-tag"></i> Ubuntu</a>
+              <a href="/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/" rel="tag"><i class="fa fa-tag"></i> 環境構築</a>
+              <a href="/tags/Cockpit/" rel="tag"><i class="fa fa-tag"></i> Cockpit</a>
+              <a href="/tags/KVM/" rel="tag"><i class="fa fa-tag"></i> KVM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/08/02/aws-dopc02-training/" rel="prev" title="AWS Certified DevOps Engineer - Professional (DOP-C02) の学習">
+                  <i class="fa fa-angle-left"></i> AWS Certified DevOps Engineer - Professional (DOP-C02) の学習
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/03/20/aws-sam-nested-sample-1/" rel="next" title="ネストされたAWS SAM アプリケーションのサンプル  その1">
+                  ネストされたAWS SAM アプリケーションのサンプル  その1 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-lemon"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">hiroaki-ma1203</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

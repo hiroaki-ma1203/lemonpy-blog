@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="このページの概略最近、いろいろな理由からLinuxの開発環境がほしくなり、Hyper-Vを使用してUbuntuの開発環境を構築したので、その時の手順などを備忘録としてメモを残します。 WSLとも迷ったのですが、スナップショット機能があったほうが安心できそうだったのと、複数の環境を作りたくなると思ったのでHyper-Vにしました。 Hyper-Vの有効化まずはWindowsのHyper-V機能を有効">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築">
+<meta property="og:url" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/index.html">
+<meta property="og:site_name" content="Lemonpy.net">
+<meta property="og:description" content="このページの概略最近、いろいろな理由からLinuxの開発環境がほしくなり、Hyper-Vを使用してUbuntuの開発環境を構築したので、その時の手順などを備忘録としてメモを残します。 WSLとも迷ったのですが、スナップショット機能があったほうが安心できそうだったのと、複数の環境を作りたくなると思ったのでHyper-Vにしました。 Hyper-Vの有効化まずはWindowsのHyper-V機能を有効">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/01-windows10-version.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/11-windows10-settings.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/12-windows10-app.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/13-windows10-prog.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/14-windows10-winfunc.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/21-hyper-v.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/22-hyper-v-name.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/23-hyper-v-gene.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/24-hyper-v-inst_opt.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/31-hyper-v-connect.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/32-hyper-v-start.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/41-ubuntu-install.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/42-ubuntu-key.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/43-ubuntu-minimum.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/44-ubuntu-clean_install.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/45-ubuntu-clean_install2.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/46-ubuntu-timezone.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/47-ubuntu-username.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/48-ubuntu-progress.png">
+<meta property="og:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/49-ubuntu-start.png">
+<meta property="article:published_time" content="2020-11-02T12:10:13.000Z">
+<meta property="article:modified_time" content="2025-03-16T10:39:27.724Z">
+<meta property="article:author" content="hiroaki-ma1203">
+<meta property="article:tag" content="Ubuntu">
+<meta property="article:tag" content="環境構築">
+<meta property="article:tag" content="Hyper-V">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/01-windows10-version.png">
+
+
+<link rel="canonical" href="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/","path":"2020/11/02/ubuntu-on-hyperv/","title":"Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築 | Lemonpy.net</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-H628V853SK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="ナビゲーションバーの切り替え" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lemonpy.net</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="検索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>ホーム</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>プロフィール</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>タグ</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>カテゴリ</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>アーカイブ</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>検索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="検索…" spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          見出し
+        </li>
+        <li class="sidebar-nav-overview">
+          概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%81%93%E3%81%AE%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E6%A6%82%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">このページの概略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hyper-V%E3%81%AE%E6%9C%89%E5%8A%B9%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">Hyper-Vの有効化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows%E3%81%AE%E3%82%A8%E3%83%87%E3%82%A3%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E7%A2%BA%E8%AA%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Windowsのエディションの確認方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hyper-V%E3%81%AE%E6%9C%89%E5%8A%B9%E5%8C%96-1"><span class="nav-number">2.2.</span> <span class="nav-text">Hyper-Vの有効化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%AE%E6%96%B0%E8%A6%8F%E4%BD%9C%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">仮想マシンの新規作成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8D%E5%89%8D%E3%81%A8%E5%A0%B4%E6%89%80%E3%81%AE%E6%8C%87%E5%AE%9A"><span class="nav-number">3.1.</span> <span class="nav-text">名前と場所の指定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%96%E4%BB%A3%E3%81%AE%E6%8C%87%E5%AE%9A"><span class="nav-number">3.2.</span> <span class="nav-text">世代の指定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3"><span class="nav-number">3.3.</span> <span class="nav-text">インストールオプション</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%AE%E6%96%B0%E8%A6%8F%E4%BD%9C%E6%88%90%E3%82%A6%E3%82%A3%E3%82%B6%E3%83%BC%E3%83%89%E3%81%AE%E5%AE%8C%E4%BA%86"><span class="nav-number">3.4.</span> <span class="nav-text">仮想マシンの新規作成ウィザードの完了</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%AE%E6%83%B3%E3%83%9E%E3%82%B7%E3%83%B3%E3%81%B8Ubuntu%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.</span> <span class="nav-text">仮想マシンへUbuntuをインストール</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu%E3%81%AEiso%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%85%A5%E6%89%8B"><span class="nav-number">4.1.</span> <span class="nav-text">Ubuntuのisoファイルの入手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hyper-V%E3%81%B8%E3%81%AE%E6%8E%A5%E7%B6%9A%E3%81%A8%E8%B5%B7%E5%8B%95"><span class="nav-number">4.2.</span> <span class="nav-text">Hyper-Vへの接続と起動</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB"><span class="nav-number">4.3.</span> <span class="nav-text">Ubuntuのインストール</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="hiroaki-ma1203"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">hiroaki-ma1203</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">ポスト</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">カテゴリ</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">タグ</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hiroaki-ma1203" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hiroaki-ma1203" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2020/11/02/ubuntu-on-hyperv/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築 | Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ubuntu 20.04 の開発環境を Windows 10 Pro の Hyper-V に構築
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+
+      <time title="作成日：2020-11-02 12:10:13" itemprop="dateCreated datePublished" datetime="2020-11-02T12:10:13+00:00">2020-11-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">編集日</span>
+      <time title="修正日：2025-03-16 10:39:27" itemprop="dateModified" datetime="2025-03-16T10:39:27+00:00">2025-03-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Ubuntu/" itemprop="url" rel="index"><span itemprop="name">Ubuntu</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/Hyper-V/" itemprop="url" rel="index"><span itemprop="name">Hyper-V</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="このページの概略"><a href="#このページの概略" class="headerlink" title="このページの概略"></a>このページの概略</h1><p>最近、いろいろな理由からLinuxの開発環境がほしくなり、Hyper-Vを使用してUbuntuの開発環境を構築したので、その時の手順などを備忘録としてメモを残します。</p>
+<p>WSLとも迷ったのですが、スナップショット機能があったほうが安心できそうだったのと、複数の環境を作りたくなると思ったのでHyper-Vにしました。</p>
+<h1 id="Hyper-Vの有効化"><a href="#Hyper-Vの有効化" class="headerlink" title="Hyper-Vの有効化"></a>Hyper-Vの有効化</h1><p>まずはWindowsのHyper-V機能を有効化していきます。<br>※Windows 10 HomeではHyper-Vが使えませんので、WSLを使うかProを購入しましょう。</p>
+<h2 id="Windowsのエディションの確認方法"><a href="#Windowsのエディションの確認方法" class="headerlink" title="Windowsのエディションの確認方法"></a>Windowsのエディションの確認方法</h2><p>スタートボタン -&gt; 設定（歯車アイコン） -&gt; システム -&gt; バージョン情報（左メニューの一番下）を開くと、情報が載っています。</p>
+<span id="more"></span>
+
+<img src="/2020/11/02/ubuntu-on-hyperv/01-windows10-version.png" class="" title="バージョン情報画面">
+
+
+<h2 id="Hyper-Vの有効化-1"><a href="#Hyper-Vの有効化-1" class="headerlink" title="Hyper-Vの有効化"></a>Hyper-Vの有効化</h2><p>エディションの確認ができたら、次にHyper-Vの有効化を行います。</p>
+<p>スタートボタン -&gt; 設定（歯車アイコン） -&gt; アプリ -&gt; プログラムと機能 -&gt; Windows の機能の有効化または無効化</p>
+<p>の順に開いていきます。</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/11-windows10-settings.png" class="" title="設定画面">
+
+<img src="/2020/11/02/ubuntu-on-hyperv/12-windows10-app.png" class="" title="アプリと機能">
+
+<img src="/2020/11/02/ubuntu-on-hyperv/13-windows10-prog.png" class="" title="プログラムと機能">
+
+<p>Windowsの機能の画面にて、Hyper-Vにチェックをつけて「OK」をクリック。</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/14-windows10-winfunc.png" class="" title="Windowsoの機能">
+
+<p>セットアップが完了すると再起動を求められる場合がありますので、その際にはPCを再起動します。</p>
+<p>以上でHyper-Vの有効化が完了です。</p>
+<h1 id="仮想マシンの新規作成"><a href="#仮想マシンの新規作成" class="headerlink" title="仮想マシンの新規作成"></a>仮想マシンの新規作成</h1><p>次に、仮想マシンを作成していきます。<br>まずはスタートメニューからHyper-V マネージャーを起動を起動します。</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/21-hyper-v.png" class="" title="Hyper-Vの画面">
+
+<p>左メニューに表示されているサーバーを選択し、右側メニューの「新規」から「仮想マシン」を選択します。</p>
+<h2 id="名前と場所の指定"><a href="#名前と場所の指定" class="headerlink" title="名前と場所の指定"></a>名前と場所の指定</h2><p>VMの名前は適当に Ubuntu-20.04 などにして、保存場所を確認します。<br>今回はCドライブの容量が少ないので、Dドライブに適当にフォルダを作成しました。</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/22-hyper-v-name.png" class="" title="Hyper-Vの名前と場所の設定画面">
+
+<h2 id="世代の指定"><a href="#世代の指定" class="headerlink" title="世代の指定"></a>世代の指定</h2><p>Ubuntuは14.04以降が第2世代をサポートしているようです。<br>他のOSをインストールする場合には、マイクロソフトのドキュメントを参照して第1世代か第2世代を選択してください。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/ja-jp/windows-server/virtualization/hyper-v/plan/should-i-create-a-generation-1-or-2-virtual-machine-in-hyper-v#ubuntu-guest-operating-system-support">（参考）Ubuntu のゲスト オペレーティング システムのサポート</a></p>
+<p>今回使用するのは Ubuntu 20.04 なので、第2世代で作成しました。</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/23-hyper-v-gene.png" class="" title="Hyper-Vの世代">
+
+<h2 id="インストールオプション"><a href="#インストールオプション" class="headerlink" title="インストールオプション"></a>インストールオプション</h2><p>ブートイメージファイルを指定するか、後で設定するか選択できます。<br>Ubuntuのサイトからisoファイルをダウンロードしていたので、そのファイルパスを指定します。</p>
+<p><a href="#Ubuntu%E3%81%AEiso%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E5%85%A5%E6%89%8B">（参考）Ubuntuのisoファイルの入手</a></p>
+<img src="/2020/11/02/ubuntu-on-hyperv/24-hyper-v-inst_opt.png" class="" title="Hyper-Vのインストールオプション">
+
+<h2 id="仮想マシンの新規作成ウィザードの完了"><a href="#仮想マシンの新規作成ウィザードの完了" class="headerlink" title="仮想マシンの新規作成ウィザードの完了"></a>仮想マシンの新規作成ウィザードの完了</h2><p>最後に設定した内容を確認し、完了をクリックします。</p>
+<h1 id="仮想マシンへUbuntuをインストール"><a href="#仮想マシンへUbuntuをインストール" class="headerlink" title="仮想マシンへUbuntuをインストール"></a>仮想マシンへUbuntuをインストール</h1><h2 id="Ubuntuのisoファイルの入手"><a href="#Ubuntuのisoファイルの入手" class="headerlink" title="Ubuntuのisoファイルの入手"></a>Ubuntuのisoファイルの入手</h2><p>下記のページからUbuntuのisoイメージをダウンロードします。</p>
+<p><a target="_blank" rel="noopener" href="https://www.ubuntulinux.jp/download">Ubuntuの入手 (https://www.ubuntulinux.jp/download)</a></p>
+<h2 id="Hyper-Vへの接続と起動"><a href="#Hyper-Vへの接続と起動" class="headerlink" title="Hyper-Vへの接続と起動"></a>Hyper-Vへの接続と起動</h2><p>元の画面に戻ると、仮想マシンが作られていると思いますので、名前をダブルクリックして接続します。</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/31-hyper-v-connect.png" class="" title="Hyper-Vへの接続">
+
+<p>この時点ではまだ仮想マシンは起動していませんので、画面上の起動ボタンをクリックし、起動します。</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/32-hyper-v-start.png" class="" title="Hyper-Vの起動">
+
+
+<h2 id="Ubuntuのインストール"><a href="#Ubuntuのインストール" class="headerlink" title="Ubuntuのインストール"></a>Ubuntuのインストール</h2><p>Ubuntuのインストーラが自動で起動しますので、画面指示に従ってインストールします。</p>
+<p>(2023&#x2F;01&#x2F;07 追記)<br>起動しない場合は、Hyper-Vの仮想マシンの設定から「セキュアブート」を無効にしてみてください。</p>
+<p>言語を選択し、右側の「Ubuntuをインストール」を選択します</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/41-ubuntu-install.png" class="" title="インストーラーの開始">
+
+<p>キーボードレイアウトは日本語を選択</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/42-ubuntu-key.png" class="" title="キーボードレイアウト選択">
+
+<p>今回はオフィスなどは不要なので最小インストールを選択</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/43-ubuntu-minimum.png" class="" title="最小インストール">
+
+<p>作ったばかりのクリーンな環境なので、削除してインストールします</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/44-ubuntu-clean_install.png" class="" title="クリーンインストール">
+
+<p>とりあえず「続ける」を選択</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/45-ubuntu-clean_install2.png" class="" title="パーディションの確認">
+
+<p>地域を選択</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/46-ubuntu-timezone.png" class="" title="タイムゾーン選択">
+
+<p>ユーザーを作成します</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/47-ubuntu-username.png" class="" title="ユーザー作成">
+
+<p>インストールが完了するのを待ちます</p>
+<img src="/2020/11/02/ubuntu-on-hyperv/48-ubuntu-progress.png" class="" title="インストール中">
+
+<p>インストールが完了すると再起動するよう表示されますので、そのまま再起動します。<br>しばらくするとUbuntuが起動しますので、必要に応じて各種設定をしてください。 </p>
+<img src="/2020/11/02/ubuntu-on-hyperv/49-ubuntu-start.png" class="" title="インストールが完了">
+
+<p>これでUbuntuのインストールは完了です。<br>ソフトウェアの更新などが表示された場合は適宜実施してください。 </p>
+<p>初期設定は別記事で書く予定です。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Ubuntu/" rel="tag"><i class="fa fa-tag"></i> Ubuntu</a>
+              <a href="/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/" rel="tag"><i class="fa fa-tag"></i> 環境構築</a>
+              <a href="/tags/Hyper-V/" rel="tag"><i class="fa fa-tag"></i> Hyper-V</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/01/hello-world/" rel="prev" title="Hexoのメモ">
+                  <i class="fa fa-angle-left"></i> Hexoのメモ
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/02/ubuntu-initial-settings/" rel="next" title="Ubuntuインストール後の初期設定">
+                  Ubuntuインストール後の初期設定 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-lemon"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">hiroaki-ma1203</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

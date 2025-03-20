@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="概要DynamoDBの中身を扱うツールが欲しくなったので、今更ですがAmplifyを使ってみようと思い、公式のチュートリアルをやってみました。 ちなみにReactも触ったことがなく、今回初めて使っているので勘違いしている部分があるかもしれませんが、ご了承ください。 チュートリアルが作成された当時に比べてAmplifyのバージョンが上がっているせいか、所々でエラーが出ていたので、調べた記録を残してお">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AWS Amplify のチュートリアルをやってみた時に詰まったところのメモ">
+<meta property="og:url" content="http://lemonpy.net/2023/11/26/aws-amplify-react-tutorial/index.html">
+<meta property="og:site_name" content="Lemonpy.net">
+<meta property="og:description" content="概要DynamoDBの中身を扱うツールが欲しくなったので、今更ですがAmplifyを使ってみようと思い、公式のチュートリアルをやってみました。 ちなみにReactも触ったことがなく、今回初めて使っているので勘違いしている部分があるかもしれませんが、ご了承ください。 チュートリアルが作成された当時に比べてAmplifyのバージョンが上がっているせいか、所々でエラーが出ていたので、調べた記録を残してお">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2023-11-26T22:18:51.000Z">
+<meta property="article:modified_time" content="2025-03-16T10:39:27.740Z">
+<meta property="article:author" content="hiroaki-ma1203">
+<meta property="article:tag" content="AWS">
+<meta property="article:tag" content="AWS-Amplify">
+<meta property="article:tag" content="React">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://lemonpy.net/2023/11/26/aws-amplify-react-tutorial/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"ja","comments":true,"permalink":"http://lemonpy.net/2023/11/26/aws-amplify-react-tutorial/","path":"2023/11/26/aws-amplify-react-tutorial/","title":"AWS Amplify のチュートリアルをやってみた時に詰まったところのメモ"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>AWS Amplify のチュートリアルをやってみた時に詰まったところのメモ | Lemonpy.net</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H628V853SK"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-H628V853SK","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="ナビゲーションバーの切り替え" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Lemonpy.net</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="検索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>ホーム</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>プロフィール</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>タグ</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>カテゴリ</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>アーカイブ</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>検索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="検索…" spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          見出し
+        </li>
+        <li class="sidebar-nav-overview">
+          概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">概要</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9F%E6%96%BD%E3%81%97%E3%81%9F%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB%E3%81%A8%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%AE%E6%A6%82%E8%A6%81"><span class="nav-number">1.1.</span> <span class="nav-text">実施したチュートリアルとエラーの概要</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%81%AD%E9%81%87%E3%81%97%E3%81%9F%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%9F%E3%81%A1"><span class="nav-number">2.</span> <span class="nav-text">遭遇したエラーたち</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB-4-GraphQL-API-%E3%81%A8%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9%E3%82%92%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B%E3%80%8D%E3%81%A7%E9%81%AD%E9%81%87%E3%81%97%E3%81%9F%E3%82%A8%E3%83%A9%E3%83%BC"><span class="nav-number">2.1.</span> <span class="nav-text">「モジュール 4: GraphQL API とデータベースを追加する」で遭遇したエラー</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%8C%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB-5-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%82%92%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B%E3%80%8D%E3%81%A7%E9%81%AD%E9%81%87%E3%81%97%E3%81%9F%E3%82%A8%E3%83%A9%E3%83%BC"><span class="nav-number">2.2.</span> <span class="nav-text">「モジュール 5: ストレージを追加する」で遭遇したエラー</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%84%9F%E6%83%B3"><span class="nav-number">3.</span> <span class="nav-text">感想</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="hiroaki-ma1203"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">hiroaki-ma1203</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">ポスト</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">カテゴリ</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">タグ</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hiroaki-ma1203" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hiroaki-ma1203" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="ja">
+    <link itemprop="mainEntityOfPage" href="http://lemonpy.net/2023/11/26/aws-amplify-react-tutorial/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="hiroaki-ma1203">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="AWS Amplify のチュートリアルをやってみた時に詰まったところのメモ | Lemonpy.net">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AWS Amplify のチュートリアルをやってみた時に詰まったところのメモ
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">投稿日</span>
+
+      <time title="作成日：2023-11-26 22:18:51" itemprop="dateCreated datePublished" datetime="2023-11-26T22:18:51+00:00">2023-11-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">編集日</span>
+      <time title="修正日：2025-03-16 10:39:27" itemprop="dateModified" datetime="2025-03-16T10:39:27+00:00">2025-03-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">カテゴリ</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">開発環境</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83/AWS/" itemprop="url" rel="index"><span itemprop="name">AWS</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Framework/" itemprop="url" rel="index"><span itemprop="name">Framework</span></a>
+        </span>
+          、
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Framework/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>DynamoDBの中身を扱うツールが欲しくなったので、<br>今更ですがAmplifyを使ってみようと思い、公式のチュートリアルをやってみました。</p>
+<p>ちなみにReactも触ったことがなく、今回初めて使っているので勘違いしている部分があるかもしれませんが、ご了承ください。</p>
+<p>チュートリアルが作成された当時に比べてAmplifyのバージョンが上がっているせいか、所々でエラーが出ていたので、調べた記録を残しておくことにしました。</p>
+<h2 id="実施したチュートリアルとエラーの概要"><a href="#実施したチュートリアルとエラーの概要" class="headerlink" title="実施したチュートリアルとエラーの概要"></a>実施したチュートリアルとエラーの概要</h2><p>今回試したのは以下のチュートリアルです。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://aws.amazon.com/jp/getting-started/hands-on/build-react-app-amplify-graphql/">フルスタック React アプリケーションを構築する</a></li>
+</ul>
+<p>エラーの概要としては、「<a target="_blank" rel="noopener" href="https://aws.amazon.com/jp/getting-started/hands-on/build-react-app-amplify-graphql/module-four/">モジュール 4: GraphQL API とデータベースを追加する</a>」で、以下のようにimportする部分があるのですが、amplifyのライブラリがバージョンアップして使い方が変わっているようで、このままコピペするとエラーが出ました。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="variable constant_">API</span> &#125; <span class="keyword">from</span> <span class="string">&quot;aws-amplify&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Amplify Dev Centerのドキュメントを参考にして修正したところ正常に動作したので、<br>おそらくこれで合っているのだろうと思っています。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.amplify.aws/javascript/build-a-backend/graphqlapi/connect-to-api/#use-generated-graphql-queries-mutations-and-subscriptions">(参考) Use generated GraphQL queries, mutations, and subscriptions</a></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; generateClient &#125; <span class="keyword">from</span> <span class="string">&#x27;aws-amplify/api&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>詳細は続きを見てください。</p>
+<span id="more"></span>
+
+<h1 id="遭遇したエラーたち"><a href="#遭遇したエラーたち" class="headerlink" title="遭遇したエラーたち"></a>遭遇したエラーたち</h1><h2 id="「モジュール-4-GraphQL-API-とデータベースを追加する」で遭遇したエラー"><a href="#「モジュール-4-GraphQL-API-とデータベースを追加する」で遭遇したエラー" class="headerlink" title="「モジュール 4: GraphQL API とデータベースを追加する」で遭遇したエラー"></a>「モジュール 4: GraphQL API とデータベースを追加する」で遭遇したエラー</h2><p>「API と相互にやり取りするためのフロントエンドコードを記述する」のチュートリアル<br>に記載されている src&#x2F;App.js をそのままコピペして npm start を実行すると、<br>以下のようなエラーが出ました。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Failed to compile.</span><br><span class="line"></span><br><span class="line">Attempted import error: &#x27;API&#x27; is not exported from &#x27;aws-amplify&#x27; (imported as &#x27;API&#x27;).</span><br><span class="line">ERROR in ./src/App.js 22:26-37</span><br><span class="line">export &#x27;API&#x27; (imported as &#x27;API&#x27;) was not found in &#x27;aws-amplify&#x27; (possible exports: Amplify)</span><br><span class="line"></span><br><span class="line">ERROR in ./src/App.js 35:10-21</span><br><span class="line">export &#x27;API&#x27; (imported as &#x27;API&#x27;) was not found in &#x27;aws-amplify&#x27; (possible exports: Amplify)</span><br><span class="line"></span><br><span class="line">ERROR in ./src/App.js 49:10-21</span><br><span class="line">export &#x27;API&#x27; (imported as &#x27;API&#x27;) was not found in &#x27;aws-amplify&#x27; (possible exports: Amplify)</span><br><span class="line"></span><br><span class="line">webpack compiled with 3 errors</span><br></pre></td></tr></table></figure>
+
+
+<p>冒頭にも述べましたが、以下のドキュメントによると、</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.amplify.aws/javascript/build-a-backend/graphqlapi/connect-to-api/#use-generated-graphql-queries-mutations-and-subscriptions">(参考) Use generated GraphQL queries, mutations, and subscriptions</a></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="variable constant_">API</span> &#125; <span class="keyword">from</span> <span class="string">&quot;aws-amplify&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>とするのではなく、以下のように import したうえで const で client を宣言して、<br>graphqlのメソッドを呼び出すように書いてありました。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; generateClient &#125; <span class="keyword">from</span> <span class="string">&#x27;aws-amplify/api&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; createTodo, updateTodo, deleteTodo &#125; <span class="keyword">from</span> <span class="string">&#x27;./graphql/mutations&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> client = <span class="title function_">generateClient</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> todo = &#123; <span class="attr">name</span>: <span class="string">&#x27;My first todo&#x27;</span>, <span class="attr">description</span>: <span class="string">&#x27;Hello world!&#x27;</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* create a todo */</span></span><br><span class="line"><span class="keyword">await</span> client.<span class="title function_">graphql</span>(&#123;</span><br><span class="line">  <span class="attr">query</span>: createTodo,</span><br><span class="line">  <span class="attr">variables</span>: &#123;</span><br><span class="line">    <span class="attr">input</span>: todo</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">(以下略)</span><br></pre></td></tr></table></figure>
+
+<p>そこで、以下のように変更したところ、エラーが解消されて正常に動作しました。</p>
+<p>よくよく見ると <code>query: createNoteMutation</code> あたりも変更が必要そうな気がしたのですが、とりあえず動いたので今回は考えないことにしました。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line">import React, &#123; useState, useEffect &#125; from &quot;react&quot;;</span><br><span class="line">import &quot;./App.css&quot;;</span><br><span class="line">import &quot;@aws-amplify/ui-react/styles.css&quot;;</span><br><span class="line"><span class="deletion">- import &#123; API &#125; from &quot;aws-amplify&quot;;</span></span><br><span class="line"><span class="addition">+ import &#123; generateClient &#125; from &quot;aws-amplify/api&quot;;</span></span><br><span class="line">import &#123;</span><br><span class="line">  Button,</span><br><span class="line">  Flex,</span><br><span class="line">  Heading,</span><br><span class="line">  Text,</span><br><span class="line">  TextField,</span><br><span class="line">  View,</span><br><span class="line">  withAuthenticator,</span><br><span class="line">&#125; from &quot;@aws-amplify/ui-react&quot;;</span><br><span class="line">import &#123; listNotes &#125; from &quot;./graphql/queries&quot;;</span><br><span class="line">import &#123;</span><br><span class="line">  createNote as createNoteMutation,</span><br><span class="line">  deleteNote as deleteNoteMutation,</span><br><span class="line">&#125; from &quot;./graphql/mutations&quot;;</span><br><span class="line"></span><br><span class="line">const App = (&#123; signOut &#125;) =&gt; &#123;</span><br><span class="line">  const [notes, setNotes] = useState([]);</span><br><span class="line"><span class="addition">+ const client = generateClient();</span></span><br><span class="line"></span><br><span class="line">  useEffect(() =&gt; &#123;</span><br><span class="line">    fetchNotes();</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  async function fetchNotes() &#123;</span><br><span class="line"><span class="deletion">-   const apiData = await API.graphql(&#123; query: listNotes &#125;);</span></span><br><span class="line"><span class="addition">+   const apiData = await client.graphql(&#123; query: listNotes &#125;);</span></span><br><span class="line">    const notesFromAPI = apiData.data.listNotes.items;</span><br><span class="line">    setNotes(notesFromAPI);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  async function createNote(event) &#123;</span><br><span class="line">    event.preventDefault();</span><br><span class="line">    const form = new FormData(event.target);</span><br><span class="line">    const data = &#123;</span><br><span class="line">      name: form.get(&quot;name&quot;),</span><br><span class="line">      description: form.get(&quot;description&quot;),</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="deletion">-   await API.graphql(&#123;</span></span><br><span class="line"><span class="addition">+   await client.graphql(&#123;</span></span><br><span class="line">      query: createNoteMutation,</span><br><span class="line">      variables: &#123; input: data &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">    fetchNotes();</span><br><span class="line">    event.target.reset();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  async function deleteNote(&#123; id &#125;) &#123;</span><br><span class="line">    const newNotes = notes.filter((note) =&gt; note.id !== id);</span><br><span class="line">    setNotes(newNotes);</span><br><span class="line"><span class="deletion">-   await API.graphql(&#123;</span></span><br><span class="line"><span class="addition">+   await client.graphql(&#123;</span></span><br><span class="line">      query: deleteNoteMutation,</span><br><span class="line">      variables: &#123; input: &#123; id &#125; &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;View className=&quot;App&quot;&gt;</span><br><span class="line">      &lt;Heading level=&#123;1&#125;&gt;My Notes App&lt;/Heading&gt;</span><br><span class="line">      &lt;View as=&quot;form&quot; margin=&quot;3rem 0&quot; onSubmit=&#123;createNote&#125;&gt;</span><br><span class="line">        &lt;Flex direction=&quot;row&quot; justifyContent=&quot;center&quot;&gt;</span><br><span class="line">          &lt;TextField</span><br><span class="line">            name=&quot;name&quot;</span><br><span class="line">            placeholder=&quot;Note Name&quot;</span><br><span class="line">            label=&quot;Note Name&quot;</span><br><span class="line">            labelHidden</span><br><span class="line">            variation=&quot;quiet&quot;</span><br><span class="line">            required</span><br><span class="line">          /&gt;</span><br><span class="line">          &lt;TextField</span><br><span class="line">            name=&quot;description&quot;</span><br><span class="line">            placeholder=&quot;Note Description&quot;</span><br><span class="line">            label=&quot;Note Description&quot;</span><br><span class="line">            labelHidden</span><br><span class="line">            variation=&quot;quiet&quot;</span><br><span class="line">            required</span><br><span class="line">          /&gt;</span><br><span class="line">          &lt;Button type=&quot;submit&quot; variation=&quot;primary&quot;&gt;</span><br><span class="line">            Create Note</span><br><span class="line">          &lt;/Button&gt;</span><br><span class="line">        &lt;/Flex&gt;</span><br><span class="line">      &lt;/View&gt;</span><br><span class="line">      &lt;Heading level=&#123;2&#125;&gt;Current Notes&lt;/Heading&gt;</span><br><span class="line">      &lt;View margin=&quot;3rem 0&quot;&gt;</span><br><span class="line">        &#123;notes.map((note) =&gt; (</span><br><span class="line">          &lt;Flex</span><br><span class="line">            key=&#123;note.id || note.name&#125;</span><br><span class="line">            direction=&quot;row&quot;</span><br><span class="line">            justifyContent=&quot;center&quot;</span><br><span class="line">            alignItems=&quot;center&quot;</span><br><span class="line">          &gt;</span><br><span class="line">            &lt;Text as=&quot;strong&quot; fontWeight=&#123;700&#125;&gt;</span><br><span class="line">              &#123;note.name&#125;</span><br><span class="line">            &lt;/Text&gt;</span><br><span class="line">            &lt;Text as=&quot;span&quot;&gt;&#123;note.description&#125;&lt;/Text&gt;</span><br><span class="line">            &lt;Button variation=&quot;link&quot; onClick=&#123;() =&gt; deleteNote(note)&#125;&gt;</span><br><span class="line">              Delete note</span><br><span class="line">            &lt;/Button&gt;</span><br><span class="line">          &lt;/Flex&gt;</span><br><span class="line">        ))&#125;</span><br><span class="line">      &lt;/View&gt;</span><br><span class="line">      &lt;Button onClick=&#123;signOut&#125;&gt;Sign Out&lt;/Button&gt;</span><br><span class="line">    &lt;/View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default withAuthenticator(App);</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="「モジュール-5-ストレージを追加する」で遭遇したエラー"><a href="#「モジュール-5-ストレージを追加する」で遭遇したエラー" class="headerlink" title="「モジュール 5: ストレージを追加する」で遭遇したエラー"></a>「モジュール 5: ストレージを追加する」で遭遇したエラー</h2><p>モジュール4とほぼ同じですが、<br>ここでも「React アプリケーションを更新する」のチュートリアル<br>に記載されている src&#x2F;App.js をそのままコピペして npm start を実行したところ、<br>以下のようなエラーが出ました。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Failed to compile.</span><br><span class="line"></span><br><span class="line">Attempted import error: &#x27;Storage&#x27; is not exported from &#x27;aws-amplify&#x27; (imported as &#x27;Storage&#x27;).</span><br><span class="line">ERROR in ./src/App.js 30:26-37</span><br><span class="line">export &#x27;Storage&#x27; (imported as &#x27;Storage&#x27;) was not found in &#x27;aws-amplify&#x27; (possible exports: Amplify)</span><br><span class="line"></span><br><span class="line">ERROR in ./src/App.js 46:28-39</span><br><span class="line">export &#x27;Storage&#x27; (imported as &#x27;Storage&#x27;) was not found in &#x27;aws-amplify&#x27; (possible exports: Amplify)</span><br><span class="line"></span><br><span class="line">ERROR in ./src/App.js 62:10-24</span><br><span class="line">export &#x27;Storage&#x27; (imported as &#x27;Storage&#x27;) was not found in &#x27;aws-amplify&#x27; (possible exports: Amplify)</span><br><span class="line"></span><br><span class="line">webpack compiled with 3 errors</span><br></pre></td></tr></table></figure>
+
+<p>今回は、ドキュメントのストレージの説明を参照します。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.amplify.aws/javascript/build-a-backend/storage/upload/">(参考) Upload files</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.amplify.aws/javascript/build-a-backend/storage/download/">(参考) Download files</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.amplify.aws/javascript/build-a-backend/storage/remove/">(参考) Remove files</a></li>
+</ul>
+<p>チュートリアルのコードは以下のような呼び出し方になっていますが、</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Storage</span> &#125; <span class="keyword">from</span> <span class="string">&quot;aws-amplify&quot;</span>;</span><br><span class="line"></span><br><span class="line">(中略)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> url = <span class="keyword">await</span> <span class="title class_">Storage</span>.<span class="title function_">get</span>(note.<span class="property">name</span>);</span><br><span class="line"></span><br><span class="line">(中略)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!!data.<span class="property">image</span>) <span class="keyword">await</span> <span class="title class_">Storage</span>.<span class="title function_">put</span>(data.<span class="property">name</span>, image);</span><br><span class="line"></span><br><span class="line">(中略)</span><br><span class="line"></span><br><span class="line"><span class="keyword">await</span> <span class="title class_">Storage</span>.<span class="title function_">remove</span>(name);</span><br><span class="line"></span><br><span class="line">(以下略)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>ここもドキュメントを参照すると変更があったようで、以下のように import して使うように書かれています。</p>
+<p>下記は getUrl だけを抜粋してドキュメントから転記しましたが、 uploadData, remove も同様です。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; getUrl &#125; <span class="keyword">from</span> <span class="string">&#x27;aws-amplify/storage&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> getUrlResult = <span class="keyword">await</span> <span class="title function_">getUrl</span>(&#123;</span><br><span class="line">  <span class="attr">key</span>: filename,</span><br><span class="line">  <span class="attr">options</span>: &#123;</span><br><span class="line">    accessLevel?: <span class="string">&#x27;guest&#x27;</span> , <span class="comment">// can be &#x27;private&#x27;, &#x27;protected&#x27;, or &#x27;guest&#x27; but defaults to `guest`</span></span><br><span class="line">    targetIdentityId?: <span class="string">&#x27;XXXXXXX&#x27;</span>, <span class="comment">// id of another user, if `accessLevel` is `guest`</span></span><br><span class="line">    validateObjectExistence?: <span class="literal">false</span>,  <span class="comment">// defaults to false</span></span><br><span class="line">    expiresIn?: <span class="number">20</span> <span class="comment">// validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)</span></span><br><span class="line">    useAccelerateEndpoint?: <span class="literal">true</span>; <span class="comment">// Whether to use accelerate endpoint.</span></span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;signed URL: &#x27;</span>, getUrlResult.<span class="property">url</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;URL expires at: &#x27;</span>, getUrlResult.<span class="property">expiresAt</span>);</span><br></pre></td></tr></table></figure>
+
+<p>ドキュメントに倣って、以下のように変更したところエラーが解消されて正常に動作しました。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br></pre></td><td class="code"><pre><span class="line">import React, &#123; useState, useEffect &#125; from &quot;react&quot;;</span><br><span class="line">import &quot;./App.css&quot;;</span><br><span class="line">import &quot;@aws-amplify/ui-react/styles.css&quot;;</span><br><span class="line">import &#123; generateClient &#125; from &quot;aws-amplify/api&quot;;</span><br><span class="line"><span class="deletion">- import &#123; Storage &#125; from &quot;aws-amplify&quot;;</span></span><br><span class="line"><span class="addition">+ import &#123; uploadData, getUrl, remove &#125; from &quot;aws-amplify/storage&quot;;</span></span><br><span class="line">import &#123;</span><br><span class="line">  Button,</span><br><span class="line">  Flex,</span><br><span class="line">  Heading,</span><br><span class="line">  Image,</span><br><span class="line">  Text,</span><br><span class="line">  TextField,</span><br><span class="line">  View,</span><br><span class="line">  withAuthenticator,</span><br><span class="line">&#125; from &quot;@aws-amplify/ui-react&quot;;</span><br><span class="line">import &#123; listNotes &#125; from &quot;./graphql/queries&quot;;</span><br><span class="line">import &#123;</span><br><span class="line">  createNote as createNoteMutation,</span><br><span class="line">  deleteNote as deleteNoteMutation,</span><br><span class="line">&#125; from &quot;./graphql/mutations&quot;;</span><br><span class="line"></span><br><span class="line">const App = (&#123; signOut &#125;) =&gt; &#123;</span><br><span class="line">  const client = generateClient();</span><br><span class="line">  const [notes, setNotes] = useState([]);</span><br><span class="line"></span><br><span class="line">  useEffect(() =&gt; &#123;</span><br><span class="line">    fetchNotes();</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  async function fetchNotes() &#123;</span><br><span class="line">    const apiData = await client.graphql(&#123; query: listNotes &#125;);</span><br><span class="line">    const notesFromAPI = apiData.data.listNotes.items;</span><br><span class="line">    await Promise.all(</span><br><span class="line">      notesFromAPI.map(async (note) =&gt; &#123;</span><br><span class="line">        if (note.image) &#123;</span><br><span class="line"><span class="deletion">-         const url = await Storage.get(note.name);</span></span><br><span class="line"><span class="deletion">-         note.image = url;</span></span><br><span class="line"><span class="addition">+         const getUrlResult = await getUrl(&#123; key: note.name &#125;);</span></span><br><span class="line"><span class="addition">+         note.image = getUrlResult.url;</span></span><br><span class="line">        &#125;</span><br><span class="line">        return note;</span><br><span class="line">      &#125;)</span><br><span class="line">    );</span><br><span class="line">    setNotes(notesFromAPI);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  async function createNote(event) &#123;</span><br><span class="line">    event.preventDefault();</span><br><span class="line">    const form = new FormData(event.target);</span><br><span class="line">    const image = form.get(&quot;image&quot;);</span><br><span class="line">    const data = &#123;</span><br><span class="line">      name: form.get(&quot;name&quot;),</span><br><span class="line">      description: form.get(&quot;description&quot;),</span><br><span class="line">      image: image.name,</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="deletion">-   if (!!data.image) await Storage.put(data.name, image);</span></span><br><span class="line"><span class="addition">+   if (!!data.image) &#123;</span></span><br><span class="line"><span class="addition">+     try &#123;</span></span><br><span class="line"><span class="addition">+       const result = await uploadData(&#123;</span></span><br><span class="line"><span class="addition">+         key: data.name,</span></span><br><span class="line"><span class="addition">+         data: image</span></span><br><span class="line"><span class="addition">+       &#125;).result;</span></span><br><span class="line"><span class="addition">+       console.log(&#x27;Succeeded: &#x27;, result);</span></span><br><span class="line"><span class="addition">+     &#125; catch (error) &#123;</span></span><br><span class="line"><span class="addition">+       console.log(&#x27;Error : &#x27;, error);</span></span><br><span class="line"><span class="addition">+     &#125;</span></span><br><span class="line"><span class="addition">+   &#125;</span></span><br><span class="line">    await client.graphql(&#123;</span><br><span class="line">      query: createNoteMutation,</span><br><span class="line">      variables: &#123; input: data &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">    fetchNotes();</span><br><span class="line">    event.target.reset();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  async function deleteNote(&#123; id, name &#125;) &#123;</span><br><span class="line">    const newNotes = notes.filter((note) =&gt; note.id !== id);</span><br><span class="line">    setNotes(newNotes);</span><br><span class="line"><span class="deletion">-   await Storage.remove(name);</span></span><br><span class="line"><span class="addition">+   try &#123;</span></span><br><span class="line"><span class="addition">+     await remove(&#123; key: name &#125;);</span></span><br><span class="line"><span class="addition">+   &#125; catch (error) &#123;</span></span><br><span class="line"><span class="addition">+     console.log(&#x27;Error &#x27;, error);</span></span><br><span class="line"><span class="addition">+   &#125;</span></span><br><span class="line">    await client.graphql(&#123;</span><br><span class="line">      query: deleteNoteMutation,</span><br><span class="line">      variables: &#123; input: &#123; id &#125; &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;View className=&quot;App&quot;&gt;</span><br><span class="line">      &lt;Heading level=&#123;1&#125;&gt;My Notes App&lt;/Heading&gt;</span><br><span class="line">      &lt;View as=&quot;form&quot; margin=&quot;3rem 0&quot; onSubmit=&#123;createNote&#125;&gt;</span><br><span class="line">        &lt;Flex direction=&quot;row&quot; justifyContent=&quot;center&quot;&gt;</span><br><span class="line">          &lt;TextField</span><br><span class="line">            name=&quot;name&quot;</span><br><span class="line">            placeholder=&quot;Note Name&quot;</span><br><span class="line">            label=&quot;Note Name&quot;</span><br><span class="line">            labelHidden</span><br><span class="line">            variation=&quot;quiet&quot;</span><br><span class="line">            required</span><br><span class="line">          /&gt;</span><br><span class="line">          &lt;TextField</span><br><span class="line">            name=&quot;description&quot;</span><br><span class="line">            placeholder=&quot;Note Description&quot;</span><br><span class="line">            label=&quot;Note Description&quot;</span><br><span class="line">            labelHidden</span><br><span class="line">            variation=&quot;quiet&quot;</span><br><span class="line">            required</span><br><span class="line">          /&gt;</span><br><span class="line">          &lt;View</span><br><span class="line">            name=&quot;image&quot;</span><br><span class="line">            as=&quot;input&quot;</span><br><span class="line">            type=&quot;file&quot;</span><br><span class="line">            style=&#123;&#123; alignSelf: &quot;end&quot; &#125;&#125;</span><br><span class="line">          /&gt;</span><br><span class="line">          &lt;Button type=&quot;submit&quot; variation=&quot;primary&quot;&gt;</span><br><span class="line">            Create Note</span><br><span class="line">          &lt;/Button&gt;</span><br><span class="line">        &lt;/Flex&gt;</span><br><span class="line">      &lt;/View&gt;</span><br><span class="line">      &lt;Heading level=&#123;2&#125;&gt;Current Notes&lt;/Heading&gt;</span><br><span class="line">      &lt;View margin=&quot;3rem 0&quot;&gt;</span><br><span class="line">        &#123;notes.map((note) =&gt; (</span><br><span class="line">          &lt;Flex</span><br><span class="line">            key=&#123;note.id || note.name&#125;</span><br><span class="line">            direction=&quot;row&quot;</span><br><span class="line">            justifyContent=&quot;center&quot;</span><br><span class="line">            alignItems=&quot;center&quot;</span><br><span class="line">          &gt;</span><br><span class="line">            &lt;Text as=&quot;strong&quot; fontWeight=&#123;700&#125;&gt;</span><br><span class="line">              &#123;note.name&#125;</span><br><span class="line">            &lt;/Text&gt;</span><br><span class="line">            &lt;Text as=&quot;span&quot;&gt;&#123;note.description&#125;&lt;/Text&gt;</span><br><span class="line">            &#123;note.image &amp;&amp; (</span><br><span class="line">              &lt;Image</span><br><span class="line">                src=&#123;note.image&#125;</span><br><span class="line">                alt=&#123;`visual aid for $&#123;notes.name&#125;`&#125;</span><br><span class="line">                style=&#123;&#123; width: 400 &#125;&#125;</span><br><span class="line">              /&gt;</span><br><span class="line">            )&#125;</span><br><span class="line">            &lt;Button variation=&quot;link&quot; onClick=&#123;() =&gt; deleteNote(note)&#125;&gt;</span><br><span class="line">              Delete note</span><br><span class="line">            &lt;/Button&gt;</span><br><span class="line">          &lt;/Flex&gt;</span><br><span class="line">        ))&#125;</span><br><span class="line">      &lt;/View&gt;</span><br><span class="line">      &lt;Button onClick=&#123;signOut&#125;&gt;Sign Out&lt;/Button&gt;</span><br><span class="line">    &lt;/View&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default withAuthenticator(App);</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h1><p>AmplifyとReactを初めて触ったのと、javascriptもあまり触ったことが無い状態から始めたものの、<br>特に困難な部分もなくチュートリアルを完了できたので、初心者に優しい良いチュートリアルだと思いました。</p>
+<p>特に、認証機能の追加が非常に簡単に行えたのは便利ですね、実際に今後作るツールでも活用したいと感じました。</p>
+<p>気になったのは、将来的に開発環境を作り直したとき、バージョン差分がどう影響してくるのか(自分が)理解できてない点です。</p>
+<p>Reactやnpmについて勉強し、一般的な考え方ややり方を理解していくことにします。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/AWS/" rel="tag"><i class="fa fa-tag"></i> AWS</a>
+              <a href="/tags/AWS-Amplify/" rel="tag"><i class="fa fa-tag"></i> AWS-Amplify</a>
+              <a href="/tags/React/" rel="tag"><i class="fa fa-tag"></i> React</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/03/20/aws-sam-container-lambda-deploy-issue/" rel="prev" title="sam deploy時にエラーではまった話">
+                  <i class="fa fa-angle-left"></i> sam deploy時にエラーではまった話
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/12/10/docker-redmine-install/" rel="next" title="Dockerを使ったRedmine環境の構築">
+                  Dockerを使ったRedmine環境の構築 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-lemon"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">hiroaki-ma1203</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
