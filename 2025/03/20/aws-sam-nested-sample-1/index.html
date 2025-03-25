@@ -19,16 +19,16 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lemonpy.net","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"検索…","empty":"検索結果が見つかりませんでした: ${query}","hits_time":"${hits} の結果が ${time} ms で見つかりました","hits":"${hits} 件の結果が見つかりました"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="概要AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。   新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、手間が多そうだったので、EventBridge">
+    <meta name="description" content="概要AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。   新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、手間が多そうだったので、 EventBridg">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ネストされたAWS SAM アプリケーションのサンプル  その1">
 <meta property="og:url" content="http://lemonpy.net/2025/03/20/aws-sam-nested-sample-1/index.html">
 <meta property="og:site_name" content="Lemonpy.net">
-<meta property="og:description" content="概要AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。   新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、手間が多そうだったので、EventBridge">
+<meta property="og:description" content="概要AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。   新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、手間が多そうだったので、 EventBridg">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:image" content="http://lemonpy.net/2025/03/20/aws-sam-nested-sample-1/architecture.drawio.png">
 <meta property="article:published_time" content="2025-03-20T11:31:48.000Z">
-<meta property="article:modified_time" content="2025-03-20T13:19:42.457Z">
+<meta property="article:modified_time" content="2025-03-25T13:58:34.082Z">
 <meta property="article:author" content="hiroaki-ma1203">
 <meta property="article:tag" content="AWS">
 <meta property="article:tag" content="AWS-SAM">
@@ -230,9 +230,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">投稿日</span>
-      
 
-      <time title="作成日：2025-03-20 11:31:48 / 修正日：13:19:42" itemprop="dateCreated datePublished" datetime="2025-03-20T11:31:48+00:00">2025-03-20</time>
+      <time title="作成日：2025-03-20 11:31:48" itemprop="dateCreated datePublished" datetime="2025-03-20T11:31:48+00:00">2025-03-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">編集日</span>
+      <time title="修正日：2025-03-25 13:58:34" itemprop="dateModified" datetime="2025-03-25T13:58:34+00:00">2025-03-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -258,7 +264,7 @@
     
     
     <div class="post-body" itemprop="articleBody"><h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。<br>S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。  </p>
-<p>新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、<br><a target="_blank" rel="noopener" href="https://repost.aws/ja/knowledge-center/cloudformation-s3-notification-lambda">手間が多そうだった</a>ので、<br>EventBridge を使用してみることにしました。</p>
+<p>新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、<br><a target="_blank" rel="noopener" href="https://repost.aws/ja/knowledge-center/cloudformation-s3-notification-lambda">手間が多そうだった</a>ので、 EventBridge を使用してみることにしました。</p>
 <span id="more"></span>
 
 <h1 id="作ったもの"><a href="#作ったもの" class="headerlink" title="作ったもの"></a>作ったもの</h1><h2 id="ソースコード"><a href="#ソースコード" class="headerlink" title="ソースコード"></a>ソースコード</h2><p>以下のリポジトリで公開しています。</p>

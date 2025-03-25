@@ -1714,7 +1714,7 @@ git をインストールしてない場合は、zipでダウンロードしてu
     <title>ネストされたAWS SAM アプリケーションのサンプル  その1</title>
     <url>/2025/03/20/aws-sam-nested-sample-1/</url>
     <content><![CDATA[<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>AWS SAM を使用して、ネストされたスタックのサンプルを作成してみました。<br>S3 → EventBridge → Lambda の流れで、S3 にオブジェクトを作成したイベントを使って Lambda をトリガーします。  </p>
-<p>新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、<br><a href="https://repost.aws/ja/knowledge-center/cloudformation-s3-notification-lambda">手間が多そうだった</a>ので、<br>EventBridge を使用してみることにしました。</p>
+<p>新規にS3を作成する場合は、通知先のSQSも同時に作れば簡単に連携できるのですが、既存の S3 にイベントを追加したい場合、<br><a href="https://repost.aws/ja/knowledge-center/cloudformation-s3-notification-lambda">手間が多そうだった</a>ので、 EventBridge を使用してみることにしました。</p>
 <span id="more"></span>
 
 <h1 id="作ったもの"><a href="#作ったもの" class="headerlink" title="作ったもの"></a>作ったもの</h1><h2 id="ソースコード"><a href="#ソースコード" class="headerlink" title="ソースコード"></a>ソースコード</h2><p>以下のリポジトリで公開しています。</p>
